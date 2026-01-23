@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+        .month-row { display: none; }
+        .month-row.active { display: table-row; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-blue-700">SCHD 통합 자산 시뮬레이터 📈</h1>
+            <p class="text-gray-600 mt-2">총 평가 자산 = 투자원금 + 시세차익 + 배당수익</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <h2 class="text-xl font-semibold border-b pb-2">투자 설정</h2>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">초기 투자금 (원)</label>
+                        <input type="number" id="initial" value="50000000" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">월 적립금 (원)</label>
+                        <input type="number" id="monthly" value="2000000" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">연 배당 수익률 (%)</label>
+                        <input type="number" id="yield" value="3.4" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">연 배당 성장률 (%)</label>
+                        <input type="number" id="divGrowth" value="11" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">연 주가 상승률 (%)</label>
+                        <input type="number" id="priceGrowth" value="5" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                    </div>
+
+                    <!-- ✅ 추가: 미국 원천징수 배당세 -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">미국 원천징수 배당세율 (%)</label>
+                        <input type="number" id="withholdingTax" value="15" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                        <p class="text-[11px] text-gray-400 mt-1">배당 계산 시 (1 - 세율)로 세후 배당을 재투자합니다.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">투자 기간 (년)</label>
+                        <input type="number" id="years" value="15" class="w-full mt-1 p-2 border rounded-md outline-blue-500">
+                    </div>
+
+                    <button onclick="runSimulation()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">
+                        계산하기
+                    </button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold mb-4 text-gray-700 text-center">자산 구성 요소별 누적 성장 추이</h3>
+                    <div style="position: relative; height:450px; width:100%">
+                        <canvas id="unifiedChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-900 p-5 rounded-2xl text-white shadow-lg">
+                        <p class="text-slate-400 text-xs">최종 총 평가 자산</p>
+                        <p id="resTotal" class="text-xl font-bold mt-1">-</p>
+                    </div>
+                    <div class="bg-emerald-600 p-5 rounded-2xl text-white shadow-lg">
+                        <p class="text-emerald-100 text-xs">누적 수익 (차익+배당)</p>
+                        <p id="resProfit" class="text-xl font-bold mt-1">-</p>
+                    </div>
+                    <div class="bg-amber-500 p-5 rounded-2xl text-white shadow-lg">
+                        <p class="text-amber-50 text-xs">마지막 해 월 배당(세후)</p>
+                        <p id="resMonthlyDiv" class="text-xl font-bold mt-1">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">연도별 데이터 (행 클릭 시 상세 펼침)</h2>
+            <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-600 border-b text-xs uppercase">
+                        <th class="p-3">연차/월</th>
+                        <th class="p-3">누적 원금</th>
+                        <th class="p-3 text-emerald-600">누적 시세차익</th>
+                        <th class="p-3 text-amber-600">누적 배당수익</th>
+                        <th class="p-3 font-bold text-slate-900">총 평가자산</th>
+                        <th class="p-3">월 배당금(세후)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let unifiedChart;
+
+        function runSimulation() {
+            const initial = parseFloat(document.getElementById('initial').value);
+            const monthly = parseFloat(document.getElementById('monthly').value);
+            const yieldRate = parseFloat(document.getElementById('yield').value) / 100;
+            const divGrowth = parseFloat(document.getElementById('divGrowth').value) / 100;
+            const priceGrowth = parseFloat(document.getElementById('priceGrowth').value) / 100;
+            const years = parseInt(document.getElementById('years').value, 10);
+
+            // ✅ 미국 원천징수 배당세율(기본 15%)
+            const withholdingTax = parseFloat(document.getElementById('withholdingTax').value) / 100;
+
+            let currentBalance = initial;
+            let totalPrincipal = initial;
+            let totalCapitalGain = 0;
+            let totalDividendProfit = 0;
+            let currentYield = yieldRate;
+
+            const labels = ['시작'];
+            const pData = [initial]; // 누적 원금
+            const gData = [0];       // 누적 시세차익
+            const dData = [0];       // 누적 배당수익
+            const tData = [initial]; // 총 평가자산
+
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            for (let year = 1; year <= years; year++) {
+                let yearlyDivTotal = 0;
+                let monthHtml = '';
+
+                for (let month = 1; month <= 12; month++) {
+                    // 1) 원금 적립
+                    totalPrincipal += monthly;
+                    currentBalance += monthly;
+
+                    // 2) 시세 차익(복리)
+                    const mPriceGain = currentBalance * (priceGrowth / 12);
+                    totalCapitalGain += mPriceGain;
+                    currentBalance += mPriceGain;
+
+                    // 3) 배당 수익(세후) + 재투자
+                    const mDivGross = currentBalance * (currentYield / 12);
+                    const mDivNet = mDivGross * (1 - withholdingTax);
+
+                    yearlyDivTotal += mDivNet;
+                    totalDividendProfit += mDivNet;
+                    currentBalance += mDivNet;
+
+                    monthHtml += `<tr class="month-row year-${year} bg-gray-50 border-b text-gray-400 text-xs">
+                        <td class="p-2 pl-8 font-medium text-blue-400">ㄴ ${month}월</td>
+                        <td class="p-2">${Math.round(totalPrincipal).toLocaleString()}원</td>
+                        <td class="p-2">${Math.round(totalCapitalGain).toLocaleString()}원</td>
+                        <td class="p-2">${Math.round(totalDividendProfit).toLocaleString()}원</td>
+                        <td class="p-2 font-bold text-slate-500">${Math.round(currentBalance).toLocaleString()}원</td>
+                        <td class="p-2 text-amber-500">${Math.round(mDivNet).toLocaleString()}원</td>
+                    </tr>`;
+                }
+
+                // 다음 해 배당률(=Yield) 성장
+                currentYield *= (1 + divGrowth);
+
+                labels.push(year + '년');
+                pData.push(totalPrincipal);
+                gData.push(totalCapitalGain);
+                dData.push(totalDividendProfit);
+                tData.push(currentBalance);
+
+                const yearRow = `<tr class="year-header border-b hover:bg-blue-50 cursor-pointer transition" onclick="toggleMonths(${year})">
+                    <td class="p-3 font-bold text-blue-700">▶ ${year}년차</td>
+                    <td class="p-3">${Math.round(totalPrincipal).toLocaleString()}원</td>
+                    <td class="p-3 text-emerald-600 font-semibold">${Math.round(totalCapitalGain).toLocaleString()}원</td>
+                    <td class="p-3 text-amber-600 font-semibold">${Math.round(totalDividendProfit).toLocaleString()}원</td>
+                    <td class="p-3 font-black text-slate-900 bg-slate-50">${Math.round(currentBalance).toLocaleString()}원</td>
+                    <td class="p-3 font-bold text-gray-700">${Math.round(yearlyDivTotal / 12).toLocaleString()}원</td>
+                </tr>`;
+
+                tableBody.innerHTML += yearRow + monthHtml;
+
+                if (year === years) {
+                    document.getElementById('resTotal').innerText = Math.round(currentBalance).toLocaleString() + '원';
+                    document.getElementById('resProfit').innerText = Math.round(totalCapitalGain + totalDividendProfit).toLocaleString() + '원';
+                    document.getElementById('resMonthlyDiv').innerText = Math.round(yearlyDivTotal / 12).toLocaleString() + '원';
+                }
+            }
+
+            updateChart(labels, pData, gData, dData, tData);
+        }
+
+        function toggleMonths(year) {
+            const rows = document.querySelectorAll(`.year-${year}`);
+            rows.forEach(row => row.classList.toggle('active'));
+        }
+
+        // ✅ 원금(아래) → 차익 → 배당(위) 스택 + 총평가자산(검정 선) + 그래프 소수점 제거
+        function updateChart(labels, principal, gain, dividend, total) {
+            const ctx = document.getElementById('unifiedChart').getContext('2d');
+            if (unifiedChart) unifiedChart.destroy();
+
+            unifiedChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: '누적 원금',
+                            data: principal,
+                            stack: 'components',
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: '#1d4ed8',
+                            borderWidth: 1,
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0,
+                            order: 1
+                        },
+                        {
+                            label: '누적 시세차익',
+                            data: gain,
+                            stack: 'components',
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: '#059669',
+                            borderWidth: 1,
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0,
+                            order: 2
+                        },
+                        {
+                            label: '누적 배당수익',
+                            data: dividend,
+                            stack: 'components',
+                            backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                            borderColor: '#d97706',
+                            borderWidth: 1,
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 0,
+                            order: 3
+                        },
+                        {
+                            label: '총 평가자산',
+                            data: total,
+                            stack: 'totalLine', // 스택 분리(중요)
+                            borderColor: '#000000',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0,
+                            order: 99
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            // ✅ 그래프 표시 소수점 제거 (억 단위 정수)
+                            ticks: { callback: (val) => Math.round(val / 100000000) + '억' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: (ctx) => {
+                                    const v = Math.round(ctx.parsed.y);
+                                    return `${ctx.dataset.label}: ${v.toLocaleString()}원`;
+                                },
+                                footer: (tooltipItems) => {
+                                    const totalItem = tooltipItems.find(i => i.dataset.label === '총 평가자산');
+                                    if (totalItem) {
+                                        return '총 평가자산: ' + Math.round(totalItem.parsed.y).toLocaleString() + '원';
+                                    }
+                                    let sum = 0;
+                                    tooltipItems.forEach(i => sum += i.parsed.y);
+                                    return '총 평가자산: ' + Math.round(sum).toLocaleString() + '원';
+                                }
+                            }
+                        },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        runSimulation();
+    </script>
+</body>
+</html>
