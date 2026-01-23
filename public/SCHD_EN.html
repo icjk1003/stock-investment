@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCHD Dividend Calculator | Asset Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .month-row { display: none; }
+        .month-row.active { display: table-row; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-end mb-4">
+            <a href="SCHD.html" class="text-sm font-bold text-gray-500 hover:text-blue-600 transition">🇰🇷 Korean Version (KRW) →</a>
+        </div>
+
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-blue-700">SCHD Asset Simulator 📈</h1>
+            <p class="text-gray-600 mt-2">Principal · Capital Gains · Dividend Growth</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <h2 class="text-xl font-semibold border-b pb-2 text-gray-800">Settings (USD)</h2>
+                    <div><label class="block text-xs font-medium text-gray-500">Initial Invest ($)</label><input type="number" id="initial" value="50000" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <div><label class="block text-xs font-medium text-gray-500">Monthly Deposit ($)</label><input type="number" id="monthly" value="1000" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <div><label class="block text-xs font-medium text-gray-500">Div Yield (%)</label><input type="number" id="yield" value="3.4" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <div><label class="block text-xs font-medium text-gray-500">Div Growth (%)</label><input type="number" id="divGrowth" value="11" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <div><label class="block text-xs font-medium text-gray-500">Price Growth (%)</label><input type="number" id="priceGrowth" value="5" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <div><label class="block text-xs font-medium text-gray-500">Dividend Tax Rate (%)</label><input type="number" id="tax" value="15" step="0.1" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <div><label class="block text-xs font-medium text-gray-500">Years</label><input type="number" id="years" value="20" class="w-full mt-1 p-2 border rounded-md outline-blue-500"></div>
+                    <button onclick="runSimulation()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">Calculate</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><div style="position: relative; height:450px; width:100%"><canvas id="unifiedChart"></canvas></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div class="bg-slate-900 p-5 rounded-2xl text-white shadow-lg"><p class="text-slate-400 text-xs uppercase">Total Balance</p><p id="resTotal" class="text-xl font-bold mt-1">-</p></div>
+                    <div class="bg-emerald-600 p-5 rounded-2xl text-white shadow-lg"><p class="text-emerald-100 text-xs uppercase">Total Gains</p><p id="resProfit" class="text-xl font-bold mt-1">-</p></div>
+                    <div class="bg-amber-500 p-5 rounded-2xl text-white shadow-lg"><p class="text-amber-50 text-xs uppercase">Monthly Div</p><p id="resMonthlyDiv" class="text-xl font-bold mt-1">-</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Annual Data Detail</h2>
+            <table class="w-full text-left text-sm border-collapse">
+                <thead><tr class="bg-gray-100 text-gray-600 border-b text-xs uppercase"><th class="p-3">Year/Month</th><th class="p-3">Principal</th><th class="p-3">Cap Gains</th><th class="p-3">Dividends</th><th class="p-3">Total Value</th><th class="p-3">Monthly Div</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <section class="mt-12 space-y-6">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">📌 User Guide for SCHD Calculator</h2>
+                <p class="text-gray-700 leading-relaxed">This simulator is designed to forecast the long-term performance of <strong>SCHD (Schwab U.S. Dividend Equity ETF)</strong>. It provides an integrated view of <strong>capital appreciation</strong> and the compound effects of <strong>dividend reinvestment (DRIP)</strong>.</p>
+                <h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">📊 Key Calculation Logic</h3>
+                <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                    <li><strong>Compound Capital Gain:</strong> Applied monthly based on the annual price growth rate.</li>
+                    <li><strong>Net Dividend Reinvestment:</strong> Net dividends after tax (15%) are reinvested into the principal monthly.</li>
+                    <li><strong>Dividend Growth:</strong> Reflects SCHD's characteristic of increasing payouts annually.</li>
+                </ul>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 p-8 rounded-2xl">
+                <h2 class="text-xl font-bold text-amber-700 mb-2">⚠️ Disclaimer</h2>
+                <p class="text-amber-700 leading-relaxed">Simulation results are based on mathematical estimates and do not guarantee future returns. Actual market conditions may lead to price drops or dividend cuts. All investment responsibilities lie with the user.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">🔐 Privacy Policy</h2>
+                <p class="text-gray-600 leading-relaxed text-sm">This site uses Google AdSense. Google may collect cookies to provide customized ads based on browsing history. You can disable cookies in your browser settings.</p>
+            </div>
+        </section>
+
+        <footer class="mt-16 py-8 text-center text-xs text-gray-400 border-t">
+            © 2026 SCHD Asset Simulator · Contact: icjk1003@gmail.com
+        </footer>
+    </div>
+
+    <script>
+        /* [스크립트 로직 한국어 버전과 동일, 라벨만 영어로 변경] */
+        let unifiedChart;
+        function runSimulation() {
+            const initial = parseFloat(document.getElementById('initial').value);
+            const monthly = parseFloat(document.getElementById('monthly').value);
+            const yieldRate = parseFloat(document.getElementById('yield').value) / 100;
+            const divGrowth = parseFloat(document.getElementById('divGrowth').value) / 100;
+            const priceGrowth = parseFloat(document.getElementById('priceGrowth').value) / 100;
+            const tax = parseFloat(document.getElementById('tax').value) / 100;
+            const years = parseInt(document.getElementById('years').value, 10);
+            let currentBalance = initial, totalPrincipal = initial, totalCapGain = 0, totalDiv = 0, currentYield = yieldRate;
+            const labels = ['Start'], pData = [initial], gData = [0], dData = [0], tData = [initial];
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            for (let y = 1; y <= years; y++) {
+                let yearlyDivTotal = 0; let monthHtml = '';
+                for (let m = 1; m <= 12; m++) {
+                    totalPrincipal += monthly; currentBalance += monthly;
+                    const gain = currentBalance * (priceGrowth / 12); totalCapGain += gain; currentBalance += gain;
+                    const netDiv = (currentBalance * (currentYield / 12)) * (1 - tax);
+                    yearlyDivTotal += netDiv; totalDiv += netDiv; currentBalance += netDiv;
+                    monthHtml += `<tr class="month-row year-${y} bg-gray-50 border-b text-gray-400 text-xs"><td class="p-2 pl-8 font-medium text-blue-400">ㄴ Mo ${m}</td><td class="p-2">$${Math.round(totalPrincipal).toLocaleString()}</td><td class="p-2">$${Math.round(totalCapGain).toLocaleString()}</td><td class="p-2">$${Math.round(totalDiv).toLocaleString()}</td><td class="p-2 font-bold">$${Math.round(currentBalance).toLocaleString()}</td><td class="p-2 text-amber-500">$${Math.round(netDiv).toLocaleString()}</td></tr>`;
+                }
+                currentYield *= (1 + divGrowth); labels.push('Yr ' + y);
+                pData.push(totalPrincipal); gData.push(totalCapGain); dData.push(totalDiv); tData.push(currentBalance);
+                tableBody.innerHTML += `<tr class="year-header border-b hover:bg-blue-50 cursor-pointer" onclick="toggleMonths(${y})"><td class="p-3 font-bold text-blue-700">▶ Year ${y}</td><td class="p-3">$${Math.round(totalPrincipal).toLocaleString()}</td><td class="p-3 font-semibold">$${Math.round(totalCapGain).toLocaleString()}</td><td class="p-3 font-semibold">$${Math.round(totalDiv).toLocaleString()}</td><td class="p-3 font-black text-slate-900 bg-slate-50">$${Math.round(currentBalance).toLocaleString()}</td><td class="p-3 font-bold text-gray-700">$${Math.round(yearlyDivTotal / 12).toLocaleString()}</td></tr>` + monthHtml;
+                if (y === years) {
+                    document.getElementById('resTotal').innerText = '$' + Math.round(currentBalance).toLocaleString();
+                    document.getElementById('resProfit').innerText = '$' + Math.round(totalCapGain + totalDiv).toLocaleString();
+                    document.getElementById('resMonthlyDiv').innerText = '$' + Math.round(yearlyDivTotal / 12).toLocaleString();
+                }
+            }
+            updateChart(labels, pData, gData, dData, tData, '$');
+        }
+        function toggleMonths(y) { document.querySelectorAll(`.year-${y}`).forEach(r => r.classList.toggle('active')); }
+        function updateChart(labels, p, g, d, t, unit) {
+            const ctx = document.getElementById('unifiedChart').getContext('2d');
+            if (unifiedChart) unifiedChart.destroy();
+            unifiedChart = new Chart(ctx, {
+                type: 'line', data: { labels, datasets: [ { label: 'Principal', data: p, stack: 'a', backgroundColor: '#2563eb', fill: true, pointRadius: 0 }, { label: 'Cap Gains', data: g, stack: 'a', backgroundColor: '#10b981', fill: true, pointRadius: 0 }, { label: 'Dividends', data: d, stack: 'a', backgroundColor: '#f59e0b', fill: true, pointRadius: 0 }, { label: 'Total Value', data: t, borderColor: '#000', borderWidth: 2, fill: false, pointRadius: 0 } ] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { stacked: true, ticks: { callback: v => unit + (v / 1000).toLocaleString() + 'k' } } } }
+            });
+        }
+        runSimulation();
+    </script>
+</body>
+</html>
