@@ -1,7 +1,9 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const cors = require("cors")({ origin: true });
-const yahooFinance = require("yahoo-finance2").default;
+const YahooFinance = require("yahoo-finance2").default;
+const yahooFinance = new YahooFinance();
+
 
 // GET /api/schdHistory?ticker=SCHD&start=2012-01-01&end=2026-01-29
 exports.schdHistory = onRequest(
