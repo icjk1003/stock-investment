@@ -244,11 +244,26 @@
     });
   }
 
+  function normalizeDateKey(d) {
+    if (!d) return null;
+    // "2012-12-04T00:00:00.000Z" 같은 경우 -> "2012-12-04"
+    return String(d).slice(0, 10);
+  }
+
+  function pickFxValue(p) {
+    // fxHistory가 어떤 필드명을 쓰든 최대한 흡수
+    const v =
+      p?.close ?? p?.rate ?? p?.value ?? p?.fx ?? p?.price ?? p?.adjClose ?? p?.adj_close;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
   function buildFXMap(fxPrices) {
-    // fxPrices: [{date, close}] where close = KRW per USD
     const map = new Map();
     for (const p of fxPrices || []) {
-      if (p?.date && Number.isFinite(Number(p.close))) map.set(p.date, Number(p.close));
+      const k = normalizeDateKey(p?.date);
+      const n = pickFxValue(p);
+      if (k && n && n > 0) map.set(k, n);
     }
     return map;
   }
@@ -365,8 +380,16 @@
       alert("환율 데이터가 충분하지 않아요. 잠시 후 다시 시도해줘.");
       return;
     }
+
+    console.log("[FX] raw length =", (fxData.prices || []).length);
+    console.log("[FX] sample =", (fxData.prices || []).slice(0, 3));
     const fxMap = buildFXMap(fxPrices);
     const fxDatesSorted = Array.from(fxMap.keys()).sort();
+    console.log("[FX] mapped length =", fxDatesSorted.length, "first=", fxDatesSorted[0], "last=", fxDatesSorted[fxDatesSorted.length-1]);
+    if (fxDatesSorted.length === 0) {
+      alert("환율 데이터가 0개로 파싱되었습니다. fxHistory 응답 필드(date/close)를 확인해야 합니다.");
+      return;
+    }
 
     // 5) 배당 이벤트 맵 (date -> perShare)
     const divMap = new Map();
