@@ -9,14 +9,9 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      {
-        "source": "/api/schdHistory",
-        "function": "schdHistory"
-      },
-      {
-        "source": "/",
-        "destination": "/SCHD.html"
-      }
+      { "source": "/api/fxHistory", "function": "fxHistory" },
+      { "source": "/api/schdHistory", "function": "schdHistory" },
+      { "source": "/", "destination": "/SCHD.html" }
     ]
   },
   "functions": [
