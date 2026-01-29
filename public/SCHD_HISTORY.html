@@ -85,8 +85,7 @@
           <p class="text-[11px] text-gray-400 leading-relaxed">
             * 가격/배당/환율 데이터는 서버(Firebase Functions)에서 조회합니다.<br/>
             * 시작일/마지막일이 휴장일이면 팝업으로 안내 후 자동으로 거래일로 보정합니다.<br/>
-            * “월 배당금(세후)”은 최근 12개월(세후) 배당합/12로 월배당처럼 보이게 만든 값입니다.<br/>
-            * “분기 배당금(세후)”은 실제 지급된 달에만 표시됩니다.
+            * “월 배당금”은 실제 분기배당(지급월)을 3개월로 나눠 배분한 값입니다(경계 보정 포함).
           </p>
         </div>
       </div>
@@ -124,7 +123,7 @@
           <tr class="bg-gray-100 text-gray-600 border-b text-xs uppercase">
             <th class="p-3">연차/월</th>
             <th class="p-3">누적 원금</th>
-            <th class="p-3 text-emerald-600">누적 시세 차익</th>
+            <th class="p-3 text-emerald-600">누적 시세차익</th>
             <th class="p-3 text-amber-600">누적 배당수익(세후)</th>
             <th class="p-3 font-bold text-slate-900">총 평가자산</th>
             <th class="p-3">월 배당금(세후)</th>
@@ -144,17 +143,23 @@
   let unifiedChart;
 
   function ymd(d) {
-    const x = (d instanceof Date) ? d : new Date(d);
+    const x = new Date(d);
     return x.toISOString().slice(0, 10);
   }
-  function isDateStr(x) { return /^\d{4}-\d{2}-\d{2}$/.test(x); }
+  function isDateStr(x) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(x);
+  }
   function addDays(dateStr, days) {
     const d = new Date(dateStr + "T00:00:00Z");
     d.setUTCDate(d.getUTCDate() + days);
     return d.toISOString().slice(0, 10);
   }
-  function monthKey(dateStr) { return String(dateStr).slice(0,7); }
-  function fmtKRW(v) { return Math.round(v).toLocaleString() + "원"; }
+  function monthKey(dateStr) {
+    return dateStr.slice(0,7);
+  }
+  function fmtKRW(v) {
+    return Math.round(v).toLocaleString() + "원";
+  }
   function toNum(x) {
     const n = Number(x);
     return Number.isFinite(n) ? n : 0;
@@ -163,11 +168,15 @@
     document.querySelectorAll(`.month-${key}`).forEach(r => r.classList.toggle('active'));
   }
 
-  function normalizeDateKey(d) {
-    if (!d) return null;
-    return String(d).slice(0, 10);
+  // ✅ "YYYY-MM"에 월 더하기/빼기
+  function addMonthsToKey(ym, delta) {
+    const y = Number(ym.slice(0, 4));
+    const m = Number(ym.slice(5, 7));
+    const d = new Date(Date.UTC(y, m - 1 + delta, 1));
+    return d.toISOString().slice(0, 7);
   }
 
+  // direction: "next"(시작일용) / "prev"(마지막일용)
   function clampToNearestTradingDay(pricesAll, dateStr, direction) {
     if (!pricesAll?.length) return null;
     if (!isDateStr(dateStr)) return null;
@@ -198,10 +207,13 @@
 
   function buildContributionSet(prices, freq, startDateStr) {
     const isContribution = new Set();
+
     if (freq === "daily") {
       for (const p of prices) isContribution.add(p.date);
       return isContribution;
     }
+
+    // monthly: 각 월의 첫 거래일만
     let lastMonth = null;
     for (const p of prices) {
       const mk = monthKey(p.date);
@@ -241,8 +253,14 @@
     });
   }
 
+  function normalizeDateKey(d) {
+    if (!d) return null;
+    return String(d).slice(0, 10);
+  }
+
   function pickFxValue(p) {
-    const v = p?.close ?? p?.rate ?? p?.value ?? p?.fx ?? p?.price ?? p?.adjClose ?? p?.adj_close;
+    const v =
+      p?.close ?? p?.rate ?? p?.value ?? p?.fx ?? p?.price ?? p?.adjClose ?? p?.adj_close;
     const n = Number(v);
     return Number.isFinite(n) ? n : null;
   }
@@ -252,28 +270,23 @@
     for (const p of fxPrices || []) {
       const k = normalizeDateKey(p?.date);
       const n = pickFxValue(p);
-      if (k && n != null && n > 0) map.set(k, n);
+      if (k && n && n > 0) map.set(k, n);
     }
     return map;
   }
 
-  function getFXSmart(dateStrRaw, fxMap, fxDatesSorted) {
-    const dateStr = normalizeDateKey(dateStrRaw);
-    if (!dateStr) return null;
-
-    // 1) 당일
+  // ✅ FX: 당일 없으면 주변에서 찾아오기 (보정)
+  function getFXSmart(dateStr, fxMap, fxDatesSorted) {
     if (fxMap.has(dateStr)) return fxMap.get(dateStr);
 
-    // 2) 주변(앞/뒤) 더 넓게
-    for (let k = 1; k <= 10; k++) {
+    const next = addDays(dateStr, +1);
+    if (fxMap.has(next)) return fxMap.get(next);
+
+    for (let k = 1; k <= 7; k++) {
       const prev = addDays(dateStr, -k);
       if (fxMap.has(prev)) return fxMap.get(prev);
-
-      const next = addDays(dateStr, +k);
-      if (fxMap.has(next)) return fxMap.get(next);
     }
 
-    // 3) 이진탐색: dateStr 이하 마지막 값
     let lo = 0, hi = fxDatesSorted.length - 1, ans = -1;
     while (lo <= hi) {
       const mid = (lo + hi) >> 1;
@@ -282,20 +295,49 @@
     }
     if (ans >= 0) return fxMap.get(fxDatesSorted[ans]);
 
-    // 4) 그래도 없으면 첫 값
-    return fxMap.get(fxDatesSorted[0]) ?? null;
+    return fxMap.get(fxDatesSorted[0]) || null;
   }
 
-  function computeSmoothedMonthlyDivUSD(months, idx) {
-    let sum = 0;
-    for (let i = Math.max(0, idx - 11); i <= idx; i++) {
-      sum += (months[i].monthDivNetUSD || 0);
+  function getFXForMonthEnd(endDateStr, fxMap, fxDatesSorted) {
+    return getFXSmart(endDateStr, fxMap, fxDatesSorted);
+  }
+
+  // ✅ 경계 보정형: "월 배당금" 합이 "분기 배당금" 합과 기간 내에서 맞도록 배분
+  function buildMonthlyDivAllocatedUSD(months) {
+    const n = months.length;
+    const alloc = new Array(n).fill(0);
+
+    for (let i = 0; i < n; i++) {
+      const q = months[i].monthDivNetUSD || 0;
+      if (q <= 0) continue;
+
+      // 기본: 현재월 + 이전 2개월
+      const candidate = [i, i - 1, i - 2];
+
+      // 기간 밖 제거
+      let picked = candidate.filter(idx => idx >= 0 && idx < n);
+
+      // 부족하면 앞으로 채워서 3개 맞추기
+      let next = i + 1;
+      while (picked.length < 3 && next < n) {
+        if (!picked.includes(next)) picked.push(next);
+        next++;
+      }
+
+      // 그래도 부족하면 가능한 달만 균등 분배
+      const k = picked.length;
+      if (k === 0) continue;
+
+      const part = q / k;
+      for (const idx of picked) alloc[idx] += part;
     }
-    return sum / 12;
+
+    return alloc;
   }
 
   async function runBacktest() {
     const ticker = document.getElementById('ticker').value.trim() || "SCHD";
+
     let startInput = document.getElementById('startDate').value;
     let endInput = document.getElementById('endDate').value;
 
@@ -308,7 +350,7 @@
     const taxRate = Math.max(0, toNum(document.getElementById('tax').value) / 100);
     const drip = document.getElementById('drip').checked;
 
-    // 1) 가격/배당 요청
+    // 1) 가격/배당 데이터: 사용자가 고른 범위로 요청
     const data = await fetchHistory(ticker, startInput, endInput);
     const pricesAll = data.prices || [];
     const divsAll = data.dividends || [];
@@ -318,20 +360,21 @@
       return;
     }
 
-    // 2) 거래일 보정
+    // 2) 시작/끝을 거래일로 보정
     const firstAvailable = data.firstDate || pricesAll[0].date;
-    const lastAvailable  = data.lastDate  || pricesAll[pricesAll.length - 1].date;
+    const lastAvailable = data.lastDate || pricesAll[pricesAll.length - 1].date;
 
     if (startInput < firstAvailable) startInput = firstAvailable;
     if (endInput > lastAvailable) endInput = lastAvailable;
 
     const startAdj = clampToNearestTradingDay(pricesAll, startInput, "next");
-    const endAdj   = clampToNearestTradingDay(pricesAll, endInput, "prev");
+    const endAdj = clampToNearestTradingDay(pricesAll, endInput, "prev");
 
     if (!startAdj || !endAdj) {
       alert("거래일 보정에 실패했어요. 기간을 다시 선택해줘.");
       return;
     }
+
     if (startAdj !== startInput) {
       alert(`시작일 ${startInput}은(는) 휴장일/비거래일입니다.\n가장 가까운 거래일 ${startAdj}로 자동 설정합니다.`);
     }
@@ -346,15 +389,16 @@
     document.getElementById('endDate').value = endDate;
 
     if (endDate < startDate) {
-      alert("보정 결과 마지막일이 시작일보다 앞이어서 계산할 수 없어요. 날짜를 다시 골라줘.");
+      alert("보정 결과 마지막일이 시작일보다 앞이 되어 계산할 수 없어요. 날짜를 다시 골라줘.");
       return;
     }
 
     const prices = pricesAll.filter(p => p.date >= startDate && p.date <= endDate);
 
-    // 3) 환율 요청(버퍼)
+    // 3) 환율 데이터: startDate보다 30일 앞부터 버퍼로 요청
     const fxStart = addDays(startDate, -30);
     const fxData = await fetchFX(fxStart, endDate);
+
     const fxPrices = fxData.prices || [];
     if (fxPrices.length < 5) {
       alert("환율 데이터가 충분하지 않아요. 잠시 후 다시 시도해줘.");
@@ -364,17 +408,12 @@
     const fxMap = buildFXMap(fxPrices);
     const fxDatesSorted = Array.from(fxMap.keys()).sort();
 
-    // 디버그 로그(원하면 남기고, 싫으면 삭제해도 됨)
-    console.log("[FX] raw length =", fxPrices.length);
-    console.log("[FX] sample =", fxPrices.slice(0, 3));
-    console.log("[FX] mapped length =", fxDatesSorted.length, "first=", fxDatesSorted[0], "last=", fxDatesSorted[fxDatesSorted.length-1]);
-
     if (fxDatesSorted.length === 0) {
-      alert("환율 데이터 파싱 결과가 0개입니다. fxHistory 응답 필드(date/close)를 확인해야 합니다.");
+      alert("환율 데이터가 0개로 파싱되었습니다. fxHistory 응답 필드(date/close)를 확인해야 합니다.");
       return;
     }
 
-    // 4) 배당 맵(date -> perShare)
+    // 4) 배당 이벤트 맵 (date -> perShare)
     const divMap = new Map();
     for (const d of divsAll) {
       if (!d?.date) continue;
@@ -383,22 +422,20 @@
       divMap.set(d.date, (divMap.get(d.date) || 0) + amt);
     }
 
-    // 5) 매수일 셋
+    // 5) 매수일 결정
     const contributeSet = buildContributionSet(prices, freq, startDate);
 
     // 6) 시뮬레이션
     let shares = 0;
     let principalKRW = 0; // 누적 원금(KRW 고정)
-    let principalUSD = 0; // USD 환산 원금(평가용)
+    let principalUSD = 0; // USD 원금(평가/시세차익 계산)
 
-    let divNetUSD = 0;    // 누적 배당(세후, USD)
-    let cashUSD = 0;      // DRIP off일 때 현금
+    let divNetUSD = 0;
+    let cashUSD = 0; // DRIP OFF일 때 배당 현금
 
     const months = [];
     let currentMonth = null;
     let monthDivNetUSD = 0;
-
-    let lastFxUsed = fxMap.get(fxDatesSorted[fxDatesSorted.length - 1]) || 1300;
 
     for (let i = 0; i < prices.length; i++) {
       const { date, close } = prices[i];
@@ -419,17 +456,19 @@
           divNetUSD,
           capGainUSD,
           valueUSD,
-          monthDivNetUSD,  // 해당 월 실제 지급된 배당(세후)
+          monthDivNetUSD, // 그 달 실제 분기배당(세후)
+          shares,
         });
 
         currentMonth = mk;
         monthDivNetUSD = 0;
       }
 
-      // ✅ FX는 무조건 값이 나오게(정규화 + fallback + lastFx)
-      let fx = getFXSmart(date, fxMap, fxDatesSorted);
-      if (!fx || fx <= 0) fx = lastFxUsed;
-      lastFxUsed = fx;
+      const fx = getFXSmart(date, fxMap, fxDatesSorted);
+      if (!fx || fx <= 0) {
+        alert(`환율 데이터가 부족합니다: ${date}`);
+        return;
+      }
 
       // (A) 매수
       if (contributeSet.has(date)) {
@@ -439,7 +478,7 @@
         principalUSD += buyUSD;
       }
 
-      // (B) 배당
+      // (B) 배당 이벤트
       const perShare = divMap.get(date) || 0;
       if (perShare > 0) {
         const gross = shares * perShare;
@@ -452,7 +491,7 @@
       }
     }
 
-    // 마지막 월 저장
+    // 마지막 월 스냅샷
     const last = prices[prices.length - 1];
     const lastValueUSD = shares * last.close + cashUSD;
     const lastCapGainUSD = lastValueUSD - principalUSD - divNetUSD;
@@ -466,29 +505,32 @@
       capGainUSD: lastCapGainUSD,
       valueUSD: lastValueUSD,
       monthDivNetUSD,
+      shares,
     });
 
-    // 월말 FX(평가용): 해당 endDate 기준 smart
+    // ✅ 월배당(분기배당 3개월 분배, 경계 보정)
+    const monthlyAllocUSD = buildMonthlyDivAllocatedUSD(months);
+
+    // 월말 환율
     function monthEndFX(endDateStr) {
-      return getFXSmart(endDateStr, fxMap, fxDatesSorted) || lastFxUsed || 1300;
+      return getFXForMonthEnd(endDateStr, fxMap, fxDatesSorted) || 1300;
     }
 
     const finalFX = monthEndFX(last.date);
     const finalValueKRW = lastValueUSD * finalFX;
     const finalProfitKRW = (lastValueUSD - principalUSD) * finalFX;
 
-    // 최종 월 배당(스무딩)
-    const lastSmoothedMonthlyDivUSD = computeSmoothedMonthlyDivUSD(months, months.length - 1);
-    const finalMonthlyDivKRW = lastSmoothedMonthlyDivUSD * finalFX;
+    // ✅ 최종 월 배당: "마지막 달에 배분된 월배당"
+    const finalMonthlyDivKRW = (monthlyAllocUSD[months.length - 1] || 0) * finalFX;
 
     document.getElementById("resTotal").innerText = fmtKRW(finalValueKRW);
     document.getElementById("resProfit").innerText = fmtKRW(finalProfitKRW);
     document.getElementById("resMonthlyDiv").innerText = fmtKRW(finalMonthlyDivKRW);
 
     document.getElementById("dataNotice").innerText =
-      `가격: ${data.firstDate || "-"} ~ ${data.lastDate || "-"} / 계산: ${startDate} ~ ${endDate} / 환율: USD/KRW`;
+      `가격 데이터: ${data.firstDate || "-"} ~ ${data.lastDate || "-"} / 계산: ${startDate} ~ ${endDate} / 환율: ${fxData.symbol || "USD/KRW"}`;
 
-    // 7) 표/차트 구성
+    // 7) 표/차트 데이터
     const labels = ["시작"];
     const pData = [0];
     const gData = [0];
@@ -498,6 +540,7 @@
     const tableBody = document.getElementById("tableBody");
     tableBody.innerHTML = "";
 
+    // 연도 grouping
     const byYear = new Map();
     for (let i = 0; i < months.length; i++) {
       const m = months[i];
@@ -509,7 +552,6 @@
     const years = Array.from(byYear.keys()).sort();
     for (const y of years) {
       const list = byYear.get(y);
-
       const yLast = list[list.length - 1];
       const yFX = monthEndFX(yLast.endDate);
 
@@ -540,17 +582,20 @@
         const capGainKRW_m = mm.capGainUSD * fx;
         const valueKRW_m = mm.valueUSD * fx;
 
-        const quarterDivKRW = (mm.monthDivNetUSD || 0) * fx; // 실제 지급
-        const smoothedMonthlyDivUSD = computeSmoothedMonthlyDivUSD(months, mm.idx);
-        const monthlyDivKRW = smoothedMonthlyDivUSD * fx;
+        // 분기배당(그 달 실제 지급된 배당)
+        const quarterDivKRW = (mm.monthDivNetUSD || 0) * fx;
 
+        // ✅ 월배당(배분된 값)
+        const monthlyDivKRW = (monthlyAllocUSD[mm.idx] || 0) * fx;
+
+        // 차트: 월단위
         labels.push(mm.key);
         pData.push(principalKRW_m);
         gData.push(capGainKRW_m);
         dData.push(divKRW_m);
         tData.push(valueKRW_m);
 
-        const quarterText = (quarterDivKRW > 0) ? fmtKRW(quarterDivKRW) : "-";
+        const quarterDivText = (quarterDivKRW > 0) ? fmtKRW(quarterDivKRW) : "-";
 
         tableBody.innerHTML += `
           <tr class="month-row month-${yearKey} bg-gray-50 border-b text-gray-500 text-xs">
@@ -560,7 +605,7 @@
             <td class="p-2">${fmtKRW(divKRW_m)}</td>
             <td class="p-2 font-bold">${fmtKRW(valueKRW_m)}</td>
             <td class="p-2 text-amber-500">${fmtKRW(monthlyDivKRW)}</td>
-            <td class="p-2 text-amber-500">${quarterText}</td>
+            <td class="p-2 text-amber-500">${quarterDivText}</td>
           </tr>
         `;
       }
@@ -569,15 +614,18 @@
     updateChart(labels, pData, gData, dData, tData);
   }
 
-  // ✅ 기본값: endDate=오늘, startDate=SCHD 첫 거래일 자동
+  // 기본값:
+  // - 마지막일: 오늘
+  // - 시작일: SCHD의 “실제 첫 거래일”을 페이지 로드시 1회 조회해서 자동 세팅
   (async function initDefaults() {
-    document.getElementById("endDate").value = ymd(new Date());
+    document.getElementById("endDate").value = ymd(Date.now());
 
     try {
-      const end = ymd(new Date());
-      const data = await fetchHistory("SCHD", "2011-01-01", end);
+      const ticker = "SCHD";
+      const end = ymd(Date.now());
+      const data = await fetchHistory(ticker, "2011-01-01", end);
       const pricesAll = data.prices || [];
-      const first = data.firstDate || pricesAll[0]?.date;
+      const first = data.firstDate || (pricesAll[0]?.date);
       if (first) {
         document.getElementById("startDate").value = first;
         document.getElementById("dataNotice").innerText =
