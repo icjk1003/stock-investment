@@ -18,7 +18,9 @@
   <div class="max-w-6xl mx-auto">
     <header class="mb-8 text-center">
       <h1 class="text-3xl font-bold text-blue-700">SCHD 과거 누적매수 백테스트 📈</h1>
-      <p class="text-gray-600 mt-2">과거 시작일부터 매월/매일 매수했을 때, 가격/배당/환율을 반영한 누적 성과를 계산합니다</p>
+      <p class="text-gray-600 mt-2">
+        과거 시작일부터 매월/매일 매수했을 때, 가격/배당/환율(자동)을 반영한 누적 성과를 계산합니다
+      </p>
       <p id="dataNotice" class="text-xs text-gray-400 mt-2"></p>
     </header>
 
@@ -39,14 +41,14 @@
             <label class="block text-xs font-medium text-gray-500">시작일</label>
             <input type="date" id="startDate"
               class="w-full mt-1 p-2 border rounded-md outline-blue-500"/>
-            <p class="text-[11px] text-gray-400 mt-1">휴장일이면 자동으로 가장 가까운 거래일로 보정됩니다.</p>
+            <p class="text-[11px] text-gray-400 mt-1">휴장일이면 팝업 안내 후 거래일로 자동 보정됩니다.</p>
           </div>
 
           <div>
             <label class="block text-xs font-medium text-gray-500">마지막일</label>
             <input type="date" id="endDate"
               class="w-full mt-1 p-2 border rounded-md outline-blue-500"/>
-            <p class="text-[11px] text-gray-400 mt-1">휴장일이면 자동으로 가장 가까운 거래일로 보정됩니다.</p>
+            <p class="text-[11px] text-gray-400 mt-1">휴장일이면 팝업 안내 후 거래일로 자동 보정됩니다.</p>
           </div>
 
           <div>
@@ -61,7 +63,7 @@
             <label class="block text-xs font-medium text-gray-500">매수 금액 (원, KRW)</label>
             <input type="number" id="buyKRW" value="2000000"
               class="w-full mt-1 p-2 border rounded-md outline-blue-500"/>
-            <p class="text-[11px] text-gray-400 mt-1">매수일의 USD/KRW 환율로 USD로 환산하여 매수합니다.</p>
+            <p class="text-[11px] text-gray-400 mt-1">매수일의 USD/KRW 환율을 자동 적용해 USD로 환산 후 매수합니다.</p>
           </div>
 
           <div>
@@ -82,7 +84,8 @@
 
           <p class="text-[11px] text-gray-400 leading-relaxed">
             * 가격/배당/환율 데이터는 서버(Firebase Functions)에서 조회합니다.<br/>
-            * 시작일/마지막일이 휴장일이면 팝업으로 안내 후 거래일로 자동 보정합니다.
+            * 시작일/마지막일이 휴장일이면 팝업으로 안내 후 자동으로 거래일로 보정합니다.<br/>
+            * “월 배당”은 실제 분기배당을 월처럼 보기 좋게 표현한 값(최근 12개월 배당/12)입니다.
           </p>
         </div>
       </div>
@@ -123,7 +126,7 @@
             <th class="p-3 text-emerald-600">누적 시세차익</th>
             <th class="p-3 text-amber-600">누적 배당수익(세후)</th>
             <th class="p-3 font-bold text-slate-900">총 평가자산</th>
-            <th class="p-3">월 배당금(세후)</th>
+            <th class="p-3">월 배당금 / 분기 배당금</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -142,24 +145,24 @@
     const x = new Date(d);
     return x.toISOString().slice(0, 10);
   }
-
   function isDateStr(x) {
     return /^\d{4}-\d{2}-\d{2}$/.test(x);
   }
-
+  function addDays(dateStr, days) {
+    const d = new Date(dateStr + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.toISOString().slice(0, 10);
+  }
   function monthKey(dateStr) {
     return dateStr.slice(0,7);
   }
-
   function fmtKRW(v) {
     return Math.round(v).toLocaleString() + "원";
   }
-
   function toNum(x) {
     const n = Number(x);
     return Number.isFinite(n) ? n : 0;
   }
-
   function toggleMonths(key) {
     document.querySelectorAll(`.month-${key}`).forEach(r => r.classList.toggle('active'));
   }
@@ -250,10 +253,19 @@
     return map;
   }
 
-  function getFXForDateOrPrev(dateStr, fxMap, fxDatesSorted) {
-    // dateStr의 fx가 없으면 이전 영업일 fx로 fallback
+  // ✅ FX 부족 문제 해결용: 날짜가 안맞아도 주변에서 찾아오기
+  // 우선순위: 당일 -> 다음날(+1) -> 이전 7일 -> 이진탐색(이전 값) -> 첫 값
+  function getFXSmart(dateStr, fxMap, fxDatesSorted) {
     if (fxMap.has(dateStr)) return fxMap.get(dateStr);
-    // 이진탐색
+
+    const next = addDays(dateStr, +1);
+    if (fxMap.has(next)) return fxMap.get(next);
+
+    for (let k = 1; k <= 7; k++) {
+      const prev = addDays(dateStr, -k);
+      if (fxMap.has(prev)) return fxMap.get(prev);
+    }
+
     let lo = 0, hi = fxDatesSorted.length - 1, ans = -1;
     while (lo <= hi) {
       const mid = (lo + hi) >> 1;
@@ -261,7 +273,26 @@
       else { hi = mid - 1; }
     }
     if (ans >= 0) return fxMap.get(fxDatesSorted[ans]);
-    return null;
+
+    return fxMap.get(fxDatesSorted[0]) || null;
+  }
+
+  // 월말 환율: 해당 날짜(월말 거래일)의 fx를 smart로
+  function getFXForMonthEnd(endDateStr, fxMap, fxDatesSorted) {
+    return getFXSmart(endDateStr, fxMap, fxDatesSorted);
+  }
+
+  // 최근 12개월(12개 월)의 분기배당 합(세후)을 기반으로 월배당(스무딩) 표시
+  function computeSmoothedMonthlyDiv(months, idx) {
+    // months[idx].monthDivNetUSD = 그 달 실제 지급 배당(세후) (분기배당이면 값, 아니면 0)
+    let sum = 0;
+    let cnt = 0;
+    for (let i = Math.max(0, idx - 11); i <= idx; i++) {
+      sum += (months[i].monthDivNetUSD || 0);
+      cnt++;
+    }
+    // 최근 12개월 합 / 12 (초반부는 cnt로 나눠도 되지만, 월배당처럼 보이게 12로 고정이 더 자연스러움)
+    return sum / 12;
   }
 
   async function runBacktest() {
@@ -279,7 +310,7 @@
     const taxRate = Math.max(0, toNum(document.getElementById('tax').value) / 100);
     const drip = document.getElementById('drip').checked;
 
-    // 1) 가격/배당 데이터: 사용자가 고른 범위로 먼저 요청 (보정은 응답 보고)
+    // 1) 가격/배당 데이터: 사용자가 고른 범위로 먼저 요청
     const data = await fetchHistory(ticker, startInput, endInput);
     const pricesAll = data.prices || [];
     const divsAll = data.dividends || [];
@@ -293,10 +324,8 @@
     const firstAvailable = data.firstDate || pricesAll[0].date;
     const lastAvailable = data.lastDate || pricesAll[pricesAll.length - 1].date;
 
-    // start가 데이터 시작보다 이르면 firstAvailable
+    // 범위 밖이면 먼저 데이터 범위로 클램프
     if (startInput < firstAvailable) startInput = firstAvailable;
-
-    // end가 데이터 마지막보다 크면 lastAvailable
     if (endInput > lastAvailable) endInput = lastAvailable;
 
     const startAdj = clampToNearestTradingDay(pricesAll, startInput, "next");
@@ -314,10 +343,9 @@
       alert(`마지막일 ${endInput}은(는) 휴장일/비거래일입니다.\n가장 가까운 거래일 ${endAdj}로 자동 설정합니다.`);
     }
 
-    let startDate = startAdj;
-    let endDate = endAdj;
+    const startDate = startAdj;
+    const endDate = endAdj;
 
-    // 보정 반영(입력칸 업데이트)
     document.getElementById('startDate').value = startDate;
     document.getElementById('endDate').value = endDate;
 
@@ -326,11 +354,12 @@
       return;
     }
 
-    // 3) 보정된 범위로 가격/배당 다시 사용(이미 pricesAll이 범위에 맞게 내려오지만 안전하게 filter)
+    // 3) 보정된 범위로 가격만 사용
     const prices = pricesAll.filter(p => p.date >= startDate && p.date <= endDate);
 
-    // 4) 환율 데이터(USD/KRW) 로드: startDate~endDate 범위
-    const fxData = await fetchFX(startDate, endDate);
+    // 4) 환율 데이터: startDate보다 30일 앞부터 버퍼로 요청(구멍 최소화)
+    const fxStart = addDays(startDate, -30);
+    const fxData = await fetchFX(fxStart, endDate);
     const fxPrices = fxData.prices || [];
     if (fxPrices.length < 5) {
       alert("환율 데이터가 충분하지 않아요. 잠시 후 다시 시도해줘.");
@@ -351,18 +380,18 @@
     // 6) 매수일 결정
     const contributeSet = buildContributionSet(prices, freq, startDate);
 
-    // 7) 시뮬레이션(USD 기준으로 주식/배당 계산, 보고는 KRW)
+    // 7) 시뮬레이션(USD로 주식/배당 계산)
     let shares = 0;
-    let principalKRW = 0;
-    let principalUSD = 0;
+    let principalKRW = 0; // 누적 원금은 KRW로 누적(매수금 고정)
+    let principalUSD = 0; // 평가/시세차익 계산을 위해 USD 원금도 기록
 
     let divNetUSD = 0;
     let cashUSD = 0; // DRIP OFF일 때 배당 현금
 
-    // 월별 스냅샷
     const months = [];
     let currentMonth = null;
     let monthDivNetUSD = 0;
+    let monthBuyCount = 0; // 월 매수 횟수(정보용)
 
     for (let i = 0; i < prices.length; i++) {
       const { date, close } = prices[i];
@@ -378,21 +407,24 @@
         months.push({
           key: currentMonth,
           endDate: prev.date,
+          principalKRW,
           principalUSD,
           divNetUSD,
           capGainUSD,
           valueUSD,
-          monthDivNetUSD,
+          monthDivNetUSD,  // 그 달 실제 지급된 배당(세후)
           shares,
-          lastClose: prev.close
+          lastClose: prev.close,
+          monthBuyCount
         });
 
         currentMonth = mk;
         monthDivNetUSD = 0;
+        monthBuyCount = 0;
       }
 
-      // 날짜별 환율(없으면 이전 환율로)
-      const fx = getFXForDateOrPrev(date, fxMap, fxDatesSorted);
+      // 날짜별 환율(스마트)
+      const fx = getFXSmart(date, fxMap, fxDatesSorted);
       if (!fx || fx <= 0) {
         alert(`환율 데이터가 부족합니다: ${date}`);
         return;
@@ -404,6 +436,7 @@
         shares += (buyUSD / close);
         principalKRW += buyKRW;
         principalUSD += buyUSD;
+        monthBuyCount++;
       }
 
       // (B) 배당 이벤트
@@ -430,27 +463,29 @@
     months.push({
       key: currentMonth,
       endDate: last.date,
+      principalKRW,
       principalUSD,
       divNetUSD,
       capGainUSD: lastCapGainUSD,
       valueUSD: lastValueUSD,
       monthDivNetUSD,
       shares,
-      lastClose: last.close
+      lastClose: last.close,
+      monthBuyCount
     });
 
-    // 8) 표시용: 월말 환율로 KRW 환산 (월말 환율 없으면 이전 환율)
+    // 8) 화면 표시: 월말 환율로 KRW 환산
     function monthEndFX(endDateStr) {
-      return getFXForDateOrPrev(endDateStr, fxMap, fxDatesSorted) || 1300;
+      return getFXForMonthEnd(endDateStr, fxMap, fxDatesSorted) || 1300;
     }
 
-    // 결과 카드(최종 월말 환율)
     const finalFX = monthEndFX(last.date);
     const finalValueKRW = lastValueUSD * finalFX;
     const finalProfitKRW = (lastValueUSD - principalUSD) * finalFX;
 
-    // 최종 월 배당: 마지막 월의 monthDivNetUSD를 월말 환율로 환산
-    const finalMonthlyDivKRW = (months[months.length - 1].monthDivNetUSD || 0) * finalFX;
+    // 최종 월 배당: “월배당(스무딩)” 기준으로 표시 (최근 12개월/12)
+    const lastSmoothedMonthlyDivUSD = computeSmoothedMonthlyDiv(months, months.length - 1);
+    const finalMonthlyDivKRW = lastSmoothedMonthlyDivUSD * finalFX;
 
     document.getElementById("resTotal").innerText = fmtKRW(finalValueKRW);
     document.getElementById("resProfit").innerText = fmtKRW(finalProfitKRW);
@@ -459,7 +494,7 @@
     document.getElementById("dataNotice").innerText =
       `가격 데이터: ${data.firstDate || "-"} ~ ${data.lastDate || "-"} / 계산: ${startDate} ~ ${endDate} / 환율: ${fxData.symbol || "USD/KRW"}`;
 
-    // 9) 표/차트 데이터 구성 (네 “SCHD 배당 계산기” 스타일)
+    // 9) 표/차트 데이터 구성 (SCHD.html 스타일)
     const labels = ["시작"];
     const pData = [0];
     const gData = [0];
@@ -471,27 +506,27 @@
 
     // 연도 grouping
     const byYear = new Map();
-    for (const m of months) {
+    for (let i = 0; i < months.length; i++) {
+      const m = months[i];
       const year = m.key.slice(0,4);
       if (!byYear.has(year)) byYear.set(year, []);
-      byYear.get(year).push(m);
+      byYear.get(year).push({ ...m, idx: i });
     }
 
     const years = Array.from(byYear.keys()).sort();
     for (const y of years) {
       const list = byYear.get(y);
 
-      // 연도 마지막달 기준 누적값
       const yLast = list[list.length - 1];
       const yFX = monthEndFX(yLast.endDate);
 
-      const yPrincipalKRW = (yLast.principalUSD * yFX);
-      const yDivKRW = (yLast.divNetUSD * yFX);
-      const yCapGainKRW = (yLast.capGainUSD * yFX);
-      const yValueKRW = (yLast.valueUSD * yFX);
+      const yPrincipalKRW = yLast.principalKRW;           // 원금은 KRW 누적 그대로
+      const yDivKRW = yLast.divNetUSD * yFX;              // 누적 배당(세후)
+      const yCapGainKRW = yLast.capGainUSD * yFX;         // 누적 시세차익
+      const yValueKRW = yLast.valueUSD * yFX;             // 총 평가자산
 
-      // 연도행(월 토글)
       const yearKey = `y${y}`;
+
       tableBody.innerHTML += `
         <tr class="year-header border-b hover:bg-blue-50 cursor-pointer" onclick="toggleMonths('${yearKey}')">
           <td class="p-3 font-bold text-blue-700">▶ ${y}년</td>
@@ -503,30 +538,36 @@
         </tr>
       `;
 
-      // 월행 + 차트(월단위)
       for (const mm of list) {
         const fx = monthEndFX(mm.endDate);
 
-        const principalKRW = mm.principalUSD * fx;
-        const divKRW = mm.divNetUSD * fx;
-        const capGainKRW = mm.capGainUSD * fx;
-        const valueKRW = mm.valueUSD * fx;
-        const monthDivKRW = (mm.monthDivNetUSD || 0) * fx;
+        const principalKRW_m = mm.principalKRW;         // 누적 원금(KRW 고정)
+        const divKRW_m = mm.divNetUSD * fx;             // 누적 배당(세후)
+        const capGainKRW_m = mm.capGainUSD * fx;        // 누적 시세차익
+        const valueKRW_m = mm.valueUSD * fx;            // 총 평가자산
 
+        // 분기 배당(그 달 실제 지급)
+        const quarterDivKRW = (mm.monthDivNetUSD || 0) * fx;
+
+        // 월 배당(스무딩): 최근 12개월 배당/12
+        const smoothedMonthlyDivUSD = computeSmoothedMonthlyDiv(months, mm.idx);
+        const monthlyDivKRW = smoothedMonthlyDivUSD * fx;
+
+        // 차트는 월단위로 촘촘히
         labels.push(mm.key);
-        pData.push(principalKRW);
-        gData.push(capGainKRW);
-        dData.push(divKRW);
-        tData.push(valueKRW);
+        pData.push(principalKRW_m);
+        gData.push(capGainKRW_m);
+        dData.push(divKRW_m);
+        tData.push(valueKRW_m);
 
         tableBody.innerHTML += `
           <tr class="month-row month-${yearKey} bg-gray-50 border-b text-gray-500 text-xs">
             <td class="p-2 pl-8 font-medium text-blue-400">ㄴ ${mm.key}</td>
-            <td class="p-2">${fmtKRW(principalKRW)}</td>
-            <td class="p-2">${fmtKRW(capGainKRW)}</td>
-            <td class="p-2">${fmtKRW(divKRW)}</td>
-            <td class="p-2 font-bold">${fmtKRW(valueKRW)}</td>
-            <td class="p-2 text-amber-500">${fmtKRW(monthDivKRW)}</td>
+            <td class="p-2">${fmtKRW(principalKRW_m)}</td>
+            <td class="p-2">${fmtKRW(capGainKRW_m)}</td>
+            <td class="p-2">${fmtKRW(divKRW_m)}</td>
+            <td class="p-2 font-bold">${fmtKRW(valueKRW_m)}</td>
+            <td class="p-2 text-amber-500">${fmtKRW(monthlyDivKRW)} / ${fmtKRW(quarterDivKRW)}</td>
           </tr>
         `;
       }
@@ -535,11 +576,32 @@
     updateChart(labels, pData, gData, dData, tData);
   }
 
-  // ✅ 기본값 설정:
-  // - 시작일: 거래가능한 첫날(데이터 조회 후 자동으로 첫 거래일로 보정되므로, 여기서는 넉넉히 2012-01-01 넣어도 됨)
+  // ✅ 기본값:
   // - 마지막일: 오늘
-  document.getElementById("startDate").value = "2012-01-01";
-  document.getElementById("endDate").value = ymd(Date.now());
+  // - 시작일: SCHD의 “실제 첫 거래일”을 페이지 로드시 1회 조회해서 자동 세팅
+  (async function initDefaults() {
+    document.getElementById("endDate").value = ymd(Date.now());
+
+    try {
+      // inception 찾기용: 2011부터 오늘까지 한 번 조회해서 firstDate를 확보
+      const ticker = "SCHD";
+      const end = ymd(Date.now());
+      const data = await fetchHistory(ticker, "2011-01-01", end);
+      const pricesAll = data.prices || [];
+      const first = data.firstDate || (pricesAll[0]?.date);
+      if (first) {
+        document.getElementById("startDate").value = first; // ✅ 거래가능한 첫날
+        document.getElementById("dataNotice").innerText =
+          `기본 시작일(첫 거래일): ${first} / 기본 마지막일: ${end}`;
+      } else {
+        // fallback
+        document.getElementById("startDate").value = "2012-01-03";
+      }
+    } catch (e) {
+      // 네트워크 문제 등 fallback
+      document.getElementById("startDate").value = "2012-01-03";
+    }
+  })();
 </script>
 </body>
 </html>
