@@ -1,12 +1,12 @@
-const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const cors = require("cors")({ origin: true });
 const yahooFinance = require("yahoo-finance2").default;
 
 // GET /api/schdHistory?ticker=SCHD&start=2012-01-01&end=2026-01-29
-exports.schdHistory = functions
-  .region("asia-northeast3") // 서울 리전(원하면 변경)
-  .https.onRequest((req, res) =>
+exports.schdHistory = onRequest(
+  { region: "asia-northeast3" }, // 서울 리전(원하면 변경)
+  (req, res) =>
     cors(req, res, async () => {
       try {
         const ticker = (req.query.ticker || "SCHD").toString();
@@ -25,8 +25,10 @@ exports.schdHistory = functions
             date: new Date(q.date).toISOString().slice(0, 10),
             close: Number(q.close),
           }))
-          .filter((q) => Number.isFinite(q.close));
+          .filter((q) => Number.isFinite(q.close))
+          .sort((a, b) => a.date.localeCompare(b.date));
 
+        // dividends parsing (array or object)
         const divEvents = [];
         const divs = result?.events?.dividends;
 
@@ -50,9 +52,8 @@ exports.schdHistory = functions
         }
 
         divEvents.sort((a, b) => a.date.localeCompare(b.date));
-        prices.sort((a, b) => a.date.localeCompare(b.date));
 
-        res.set("Cache-Control", "public, max-age=3600"); // 1시간 캐시
+        res.set("Cache-Control", "public, max-age=3600");
         return res.status(200).json({
           ticker,
           start,
@@ -67,4 +68,4 @@ exports.schdHistory = functions
         return res.status(500).json({ error: String(e) });
       }
     })
-  );
+);
