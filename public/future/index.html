@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Future Simulator | MyValuePick</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/assets/ui.css" />
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <a href="/" class="font-black text-xl">MyValuePick</a>
+    <h1 class="mt-6 text-3xl font-black">Future Simulator</h1>
+    <p class="mt-2 text-slate-600">Shared calculator: /future/?region=kr&ticker=SCHD</p>
+  </div>
+  <script type="module">
+    import { getContext } from "/assets/app.js";
+    const ctx = getContext();
+    document.documentElement.lang = ctx.lang;
+  </script>
+</body>
+</html>

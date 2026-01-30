@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TQQQ Guide (CA) | 3x NASDAQ-100 Backtest · Future Simulator</title>
+  <meta name="description" content="TQQQ (3x leveraged NASDAQ-100 ETF) guide for Canada. View CAD & USD, high risk and path dependence. Use backtest and future sim carefully." />
+
+  <link rel="canonical" href="https://myvaluepick.com/ca/tqqq/" />
+  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/ca/tqqq/" />
+  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/tqqq/" />
+  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/ca/tqqq/" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+    body { font-family: 'Pretendard', sans-serif; }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="/ca/" class="flex items-center gap-2">
+      <div class="w-9 h-9 rounded-xl bg-amber-500"></div>
+      <div class="font-extrabold text-lg">MyValuePick</div>
+      <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">CA</span>
+    </a>
+    <div class="flex items-center gap-2">
+      <a href="/ca/" class="text-sm font-bold text-slate-500 hover:text-amber-600 transition">Home</a>
+      <a href="/backtest/?region=ca&ticker=TQQQ" class="text-sm font-bold text-slate-500 hover:text-amber-600 transition">Backtest</a>
+      <a href="/future/?region=ca&ticker=TQQQ" class="text-sm font-bold text-slate-500 hover:text-amber-600 transition">Future</a>
+      <a href="/kr/tqqq/" class="text-sm font-extrabold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl hover:bg-amber-100 transition">KR</a>
+    </div>
+  </div>
+
+  <section class="max-w-6xl mx-auto px-4 pb-6">
+    <div class="bg-white border border-slate-100 rounded-3xl shadow-sm p-6 md:p-10">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 text-xs font-black text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+            Leveraged (3x) · High Risk
+          </div>
+          <h1 class="mt-3 text-3xl md:text-4xl font-black text-amber-700">TQQQ Guide (CA)</h1>
+          <p class="mt-3 text-slate-600 leading-relaxed">
+            TQQQ targets <b>3x daily</b> NASDAQ-100 exposure.
+            It can grow fast in strong bull markets, but <b>drawdowns and path dependence</b> can be severe.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <a href="/backtest/?region=ca&ticker=TQQQ"
+             class="text-center px-5 py-3 rounded-2xl bg-amber-500 text-white font-extrabold hover:bg-amber-600 transition">
+            TQQQ Backtest →
+          </a>
+          <a href="/future/?region=ca&ticker=TQQQ"
+             class="text-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-extrabold hover:bg-black transition">
+            TQQQ Future →
+          </a>
+        </div>
+      </div>
+
+      <!-- Price Widget -->
+      <div class="mt-8 bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-black">TQQQ Price</h2>
+            <p class="mt-1 text-sm text-slate-500">
+              Data: Server (Firebase Functions) · Ticker: <b>TQQQ</b> · FX: <b>USDCAD</b>
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="inline-flex rounded-2xl bg-slate-100 p-1">
+              <button id="btnUSD"
+                class="px-3 py-2 rounded-xl font-extrabold text-sm bg-white shadow-sm"
+                onclick="setDisplayCurrency('USD')">USD</button>
+              <button id="btnLOCAL"
+                class="px-3 py-2 rounded-xl font-extrabold text-sm text-slate-700 hover:bg-slate-200"
+                onclick="setDisplayCurrency('LOCAL')">CAD</button>
+            </div>
+
+            <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-extrabold text-sm"
+              onclick="loadETFPrice('1M')">1M</button>
+            <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-extrabold text-sm"
+              onclick="loadETFPrice('6M')">6M</button>
+            <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-extrabold text-sm"
+              onclick="loadETFPrice('1Y')">1Y</button>
+            <button class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-extrabold text-sm"
+              onclick="loadETFPrice('5Y')">5Y</button>
+          </div>
+        </div>
+
+        <div class="mt-5 grid md:grid-cols-4 gap-4">
+          <div class="rounded-2xl bg-slate-900 text-white p-5 shadow-lg">
+            <div id="priceLabel" class="text-xs text-slate-300 font-bold uppercase">Current</div>
+            <div id="etfPrice" class="mt-2 text-2xl font-black">-</div>
+            <div id="etfPriceDate" class="mt-1 text-xs text-slate-300">-</div>
+            <div id="etfFxLine" class="mt-1 text-xs text-slate-300">-</div>
+          </div>
+
+          <div class="rounded-2xl bg-amber-50 border border-amber-100 p-5">
+            <div id="retLabel" class="text-xs text-amber-700 font-bold uppercase">Period Return</div>
+            <div id="etfReturn" class="mt-2 text-2xl font-black text-amber-800">-</div>
+            <div id="etfRange" class="mt-1 text-xs text-amber-800/70">-</div>
+          </div>
+
+          <div class="md:col-span-2 rounded-2xl bg-white border border-slate-200 p-4">
+            <div class="text-xs font-bold text-slate-500 mb-2">Price Trend</div>
+            <div style="position: relative; height: 220px; width: 100%;">
+              <canvas id="etfChart"></canvas>
+            </div>
+            <div id="etfStatus" class="mt-2 text-xs text-slate-400">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Summary -->
+      <div class="mt-8 grid md:grid-cols-4 gap-4">
+        <div class="rounded-2xl bg-white border border-slate-100 p-5">
+          <div class="text-xs font-black text-slate-500 uppercase">Core</div>
+          <div class="mt-2 font-extrabold text-lg">3x daily</div>
+          <p class="mt-2 text-sm text-slate-600">Leverage resets every day</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-100 p-5">
+          <div class="text-xs font-black text-slate-500 uppercase">Behavior</div>
+          <div class="mt-2 font-extrabold text-lg">Path dependent</div>
+          <p class="mt-2 text-sm text-slate-600">Volatility drag can hurt over time</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-100 p-5">
+          <div class="text-xs font-black text-slate-500 uppercase">Risk</div>
+          <div class="mt-2 font-extrabold text-lg">Extreme drawdowns</div>
+          <p class="mt-2 text-sm text-slate-600">Large losses possible in bear markets</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-100 p-5">
+          <div class="text-xs font-black text-slate-500 uppercase">CA Point</div>
+          <div class="mt-2 font-extrabold text-lg">Leverage + FX</div>
+          <p class="mt-2 text-sm text-slate-600">CAD outcome can swing even more</p>
+        </div>
+      </div>
+
+      <!-- Fit / Caution -->
+      <div class="mt-8 grid md:grid-cols-2 gap-4">
+        <div class="rounded-3xl bg-emerald-50 border border-emerald-100 p-6">
+          <h3 class="text-lg font-black text-emerald-800">👍 Good for</h3>
+          <ul class="mt-3 space-y-2 text-sm text-emerald-900/80 list-disc pl-5">
+            <li>Experienced investors with strict risk management</li>
+            <li>Short-to-medium tactical exposure in strong uptrends</li>
+            <li>Those who understand leverage reset & position sizing</li>
+          </ul>
+        </div>
+        <div class="rounded-3xl bg-rose-50 border border-rose-100 p-6">
+          <h3 class="text-lg font-black text-rose-800">⚠️ Watch-outs</h3>
+          <ul class="mt-3 space-y-2 text-sm text-rose-900/80 list-disc pl-5">
+            <li>Volatility decay / path dependence can damage long-term holds</li>
+            <li>Drawdowns can be extreme and recovery may take years</li>
+            <li>FX swings can amplify or reduce CAD returns even more</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="mt-8 rounded-3xl bg-white border border-slate-100 p-6 md:p-8">
+        <h3 class="text-xl font-black">FAQ</h3>
+        <p class="mt-1 text-sm text-slate-500">Common questions. (Click to expand)</p>
+
+        <div class="mt-4 space-y-3">
+          <details class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <summary class="font-extrabold cursor-pointer">Why show CAD and USD?</summary>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              TQQQ is quoted in USD. When measuring in CAD, USD/CAD adds an extra source of volatility.
+              With a leveraged ETF, the combination of <b>leverage + FX</b> can create larger CAD swings than you expect.
+            </p>
+          </details>
+
+          <details class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <summary class="font-extrabold cursor-pointer">Why can TQQQ underperform “3x” over time?</summary>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              TQQQ targets <b>3x the daily move</b> and resets every day.
+              Over time, choppy markets can create <b>volatility drag</b>, making long-run results <b>path dependent</b>.
+            </p>
+          </details>
+
+          <details class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <summary class="font-extrabold cursor-pointer">What do backtest/future sims assume?</summary>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              Backtest reflects how TQQQ actually traded historically (including leverage effects).
+              Future sim uses your assumptions but cannot fully capture regime shifts, volatility clustering, or tracking differences.
+            </p>
+          </details>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="mt-8 rounded-3xl bg-amber-50 border border-amber-100 p-6 md:p-8">
+        <h3 class="text-lg font-black text-amber-800">⚠️ Disclaimer</h3>
+        <p class="mt-2 text-sm text-amber-900/80 leading-relaxed">
+          This page is for educational purposes only and does not guarantee future performance.
+          Investment decisions are your own responsibility.
+        </p>
+        <div class="mt-4 text-xs text-amber-900/70 leading-relaxed">
+          <b>Data</b> · Price/dividend/FX come from external providers via server (Firebase Functions). Delays, missing points, or errors may exist.
+        </div>
+      </div>
+
+      <!-- Other Tickers (CA) -->
+      <div class="mt-8 rounded-3xl bg-white border border-slate-100 p-6 md:p-8">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h3 class="text-xl font-black">Other ticker guides</h3>
+            <p class="mt-1 text-sm text-slate-500">Compare to build intuition faster.</p>
+          </div>
+          <div class="text-sm text-slate-500 font-bold">CA</div>
+        </div>
+
+        <div class="mt-5 grid md:grid-cols-4 gap-4">
+          <a href="/ca/schd/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+            <div class="text-xs font-black text-slate-500 uppercase">Dividend</div>
+            <div class="mt-2 text-lg font-extrabold">SCHD</div>
+            <p class="mt-2 text-sm text-slate-600">Dividend growth guide</p>
+          </a>
+          <a href="/ca/spy/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+            <div class="text-xs font-black text-slate-500 uppercase">Core</div>
+            <div class="mt-2 text-lg font-extrabold">SPY</div>
+            <p class="mt-2 text-sm text-slate-600">S&P 500 benchmark guide</p>
+          </a>
+          <a href="/ca/qqq/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+            <div class="text-xs font-black text-slate-500 uppercase">Growth</div>
+            <div class="mt-2 text-lg font-extrabold">QQQ</div>
+            <p class="mt-2 text-sm text-slate-600">NASDAQ-100 growth guide</p>
+          </a>
+          <a href="/ca/tqqq/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+            <div class="text-xs font-black text-slate-500 uppercase">Leveraged</div>
+            <div class="mt-2 text-lg font-extrabold">TQQQ</div>
+            <p class="mt-2 text-sm text-slate-600">3x leveraged guide</p>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="max-w-6xl mx-auto px-4 py-10 text-center text-xs text-slate-400">
+    © 2026 MyValuePick · Contact: icjk1003@gmail.com
+  </footer>
+
+  <script>
+    const PAGE = { ticker: "TQQQ", label: "TQQQ" };
+    const REGION = { code:"ca", localCcy:"CAD", localLocale:"en-CA", fxPairLabel:"USDCAD", showFx:true, fxPairQuery:"USDCAD" };
+
+    let etfChart;
+    let displayCurrencyMode = "LOCAL";
+    let cachedRange = "1Y";
+    let cachedPrices = [];
+    let fxMap = new Map();
+    let fxDatesSorted = [];
+    let fxOk = false;
+
+    function ymd(d){ return new Date(d).toISOString().slice(0,10); }
+    function addDays(s,n){ const d=new Date(s+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
+    function calcStartByRange(end,range){ if(range==="1M")return addDays(end,-40); if(range==="6M")return addDays(end,-220); if(range==="1Y")return addDays(end,-400); if(range==="5Y")return addDays(end,-2000); return addDays(end,-400); }
+
+    async function fetchHistory(ticker,start,end){
+      const url=`/api/schdHistory?ticker=${encodeURIComponent(ticker)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+      const r=await fetch(url); if(!r.ok) throw new Error(await r.text()); return r.json();
+    }
+    async function fetchFX(start,end){
+      const url=`/api/fxHistory?pair=${encodeURIComponent(REGION.fxPairQuery)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+      const r=await fetch(url); if(!r.ok) throw new Error(await r.text()); return r.json();
+    }
+
+    function normalizeDateKey(d){ return d?String(d).slice(0,10):null; }
+    function pickFxValue(p){ const v=p?.close ?? p?.rate ?? p?.value ?? p?.fx ?? p?.price ?? p?.adjClose ?? p?.adj_close; const n=Number(v); return Number.isFinite(n)?n:null; }
+    function buildFXMap(fxPrices){
+      const map=new Map();
+      for(const p of fxPrices||[]){
+        const k=normalizeDateKey(p?.date);
+        const n=pickFxValue(p);
+        if(k && n && n>0) map.set(k,n);
+      }
+      return map;
+    }
+    function getFXSmart(dateStr){
+      if(!fxOk) return null;
+      if(fxMap.has(dateStr)) return fxMap.get(dateStr);
+      const next=addDays(dateStr,+1);
+      if(fxMap.has(next)) return fxMap.get(next);
+      for(let k=1;k<=7;k++){
+        const prev=addDays(dateStr,-k);
+        if(fxMap.has(prev)) return fxMap.get(prev);
+      }
+      let lo=0,hi=fxDatesSorted.length-1,ans=-1;
+      while(lo<=hi){
+        const mid=(lo+hi)>>1;
+        if(fxDatesSorted[mid]<=dateStr){ ans=mid; lo=mid+1; }
+        else hi=mid-1;
+      }
+      if(ans>=0) return fxMap.get(fxDatesSorted[ans]);
+      return fxMap.get(fxDatesSorted[0])||null;
+    }
+
+    function fmtMoney(v, locale, ccy){
+      if(!Number.isFinite(v)) return "-";
+      return new Intl.NumberFormat(locale,{style:"currency",currency:ccy,minimumFractionDigits:2,maximumFractionDigits:2}).format(v);
+    }
+    function fmtUSD(v){ return fmtMoney(v,"en-US","USD"); }
+    function fmtCAD(v){ return fmtMoney(v,"en-CA","CAD"); }
+    function fmtPct(v){ if(!Number.isFinite(v)) return "-"; const sign=v>0?"+":""; return sign+(v*100).toFixed(2)+"%"; }
+
+    function setActive(btn, active){
+      btn.className = active
+        ? "px-3 py-2 rounded-xl font-extrabold text-sm bg-white shadow-sm"
+        : "px-3 py-2 rounded-xl font-extrabold text-sm text-slate-700 hover:bg-slate-200";
+    }
+    function updateToggleUI(){
+      const btnUSD=document.getElementById("btnUSD");
+      const btnLOCAL=document.getElementById("btnLOCAL");
+      setActive(btnUSD, displayCurrencyMode==="USD");
+      setActive(btnLOCAL, displayCurrencyMode!=="USD");
+      document.getElementById("priceLabel").innerText = displayCurrencyMode==="USD"?"Current (USD)":"Current (CAD)";
+      document.getElementById("retLabel").innerText   = displayCurrencyMode==="USD"?"Period Return (USD)":"Period Return (CAD)";
+    }
+    function setDisplayCurrency(mode){
+      displayCurrencyMode = (mode==="USD")?"USD":"LOCAL";
+      updateToggleUI();
+      if(cachedPrices.length) renderPriceWidgetFromCache();
+    }
+
+    function drawChart(labels, values, yPrefix){
+      const ctx=document.getElementById("etfChart").getContext("2d");
+      if(etfChart) etfChart.destroy();
+      etfChart=new Chart(ctx,{
+        type:"line",
+        data:{ labels, datasets:[{ label:PAGE.label, data:values, pointRadius:0, borderWidth:2, fill:false }] },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{ display:false } },
+          scales:{ x:{ ticks:{ maxTicksLimit:6 } }, y:{ ticks:{ callback:v=>yPrefix+v } } }
+        }
+      });
+    }
+
+    function toDisplaySeries(prices, mode){
+      if(mode==="USD") return prices.map(p=>({date:p.date, value:Number(p.close), fx:null}));
+      const out=[];
+      for(const p of prices){
+        const fx=getFXSmart(p.date);
+        if(!fx) continue;
+        out.push({date:p.date, value:Number(p.close)*fx, fx});
+      }
+      return out;
+    }
+
+    function renderPriceWidgetFromCache(){
+      const status=document.getElementById("etfStatus");
+      const priceEl=document.getElementById("etfPrice");
+      const dateEl=document.getElementById("etfPriceDate");
+      const fxLineEl=document.getElementById("etfFxLine");
+      const retEl=document.getElementById("etfReturn");
+      const rangeEl=document.getElementById("etfRange");
+
+      const raw=cachedPrices;
+      if(raw.length<5) return;
+
+      const series=toDisplaySeries(raw, displayCurrencyMode);
+      if(series.length<5){
+        status.innerText="Not enough FX data to display CAD. Try USD.";
+        return;
+      }
+
+      const first=series[0], last=series[series.length-1];
+      retEl.innerText=fmtPct((last.value/first.value)-1);
+      rangeEl.innerText=`${first.date} ~ ${last.date} (${cachedRange})`;
+      dateEl.innerText="As of: "+last.date;
+
+      if(displayCurrencyMode==="USD"){
+        priceEl.innerText=fmtUSD(last.value);
+        fxLineEl.innerText=fxOk?`FX ${REGION.fxPairLabel}: 1 USD = ${getFXSmart(last.date)?.toFixed(4) ?? "-"} CAD`:"FX: -";
+        drawChart(series.map(p=>p.date), series.map(p=>p.value), "$");
+        status.innerText="Done (USD)";
+      }else{
+        priceEl.innerText=fmtCAD(last.value);
+        const fx=last.fx ?? getFXSmart(last.date);
+        fxLineEl.innerText=fx?`FX ${REGION.fxPairLabel}: 1 USD = ${fx.toFixed(4)} CAD`:"FX: -";
+        drawChart(series.map(p=>p.date), series.map(p=>p.value), "C$");
+        status.innerText="Done (CAD)";
+      }
+    }
+
+    async function loadETFPrice(range="1Y"){
+      const status=document.getElementById("etfStatus");
+      try{
+        cachedRange=range;
+        status.innerText="Loading...";
+        ["etfPrice","etfPriceDate","etfFxLine","etfReturn","etfRange"].forEach(id=>document.getElementById(id).innerText="-");
+
+        const end=ymd(new Date());
+        const start=calcStartByRange(end, range);
+
+        const [data, fxData] = await Promise.all([
+          fetchHistory(PAGE.ticker, start, end),
+          fetchFX(start, end)
+        ]);
+
+        const prices=(data.prices||[])
+          .filter(p=>p?.date && Number.isFinite(Number(p.close)))
+          .map(p=>({date:String(p.date).slice(0,10), close:Number(p.close)}));
+
+        cachedPrices=prices;
+
+        fxMap=buildFXMap(fxData?.prices || fxData?.fx || fxData || []);
+        fxDatesSorted=Array.from(fxMap.keys()).sort();
+        fxOk=fxDatesSorted.length>10;
+
+        if(prices.length<5){ status.innerText="Not enough price data."; return; }
+
+        updateToggleUI();
+        renderPriceWidgetFromCache();
+      }catch(e){
+        document.getElementById("etfStatus").innerText="Error: "+String(e).slice(0,180);
+      }
+    }
+
+    updateToggleUI();
+    loadETFPrice("1Y");
+  </script>
+</body>
+</html>

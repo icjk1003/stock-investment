@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>MyValuePick | ETF 백테스트 & 배당/자산 시뮬레이터</title>
+  <meta name="description" content="SCHD, SPY, QQQ, TQQQ 등 ETF 백테스트(과거 누적매수)와 미래 자산 시뮬레이션을 표/그래프로 확인하세요. 배당(세후)·환율·세금 정책 반영." />
+
+  <link rel="canonical" href="/" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+    body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+
+    /* ✅ 설명글 2줄 고정(라인 수 달라도 버튼 위치 고정) */
+    .clamp-2{
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ✅ 그리드 행 높이 균등(카드 높이 흔들림 방지) */
+    #tickerGrid{
+      grid-auto-rows: 1fr;
+      align-items: stretch;
+    }
+  </style>
+</head>
+
+<body class="p-4 md:p-8">
+  <div class="max-w-6xl mx-auto">
+    <!-- Top Nav -->
+    <div class="flex items-center justify-between mb-6">
+      <a href="/" class="flex items-center gap-2">
+        <div class="h-9 w-9 rounded-2xl bg-blue-600"></div>
+        <div>
+          <div class="font-extrabold text-slate-900 leading-tight">MyValuePick</div>
+          <div class="text-[11px] text-slate-500 -mt-0.5">ETF 백테스트 · 미래 시뮬</div>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <a href="/backtest/" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">백테스트</a>
+        <span class="text-slate-300">·</span>
+        <a href="/future/" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">미래 시뮬</a>
+        <span class="text-slate-300">·</span>
+        <a href="/kr/" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">KR 가이드</a>
+
+        <div class="ml-3 flex items-center gap-1 bg-white border rounded-xl px-2 py-1 shadow-sm">
+          <span class="text-[11px] text-slate-500 font-semibold">Region</span>
+          <a href="/kr/" class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-900 text-white">KR</a>
+          <a href="/us/" class="text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">US</a>
+          <a href="/ca/" class="text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">CA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="bg-white border border-gray-100 rounded-3xl p-8 md:p-10 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">
+            ETF 투자 계산기<br/>
+            <span class="text-blue-600">백테스트 + 미래 시뮬</span>
+          </h1>
+          <p class="text-slate-600 mt-4 leading-relaxed">
+            SCHD / SPY / QQQ / TQQQ 등 원하는 티커를 선택하고<br/>
+            과거 누적매수 백테스트 또는 앞으로의 자산 성장 시뮬레이션을
+            표와 그래프로 확인하세요.
+          </p>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <a href="/backtest/?region=kr&ticker=SCHD" class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
+              ✅ 바로 백테스트 시작
+            </a>
+            <a href="/future/?region=kr&ticker=SCHD" class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition">
+              ✅ 미래 시뮬 시작
+            </a>
+          </div>
+
+          <div class="mt-4 text-xs text-slate-400">
+            * 데이터: 가격/배당/환율은 서버(Firebase Functions)에서 조회하도록 구성 가능 (CORS 회피)
+          </div>
+        </div>
+
+        <!-- Right mini cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-300 font-bold uppercase">Backtest</div>
+            <div class="text-lg font-extrabold mt-1">과거 누적매수</div>
+            <div class="text-xs text-slate-300 mt-2">매월/매일 매수, 배당·환율·세금 반영</div>
+          </div>
+          <div class="bg-emerald-600 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-emerald-100 font-bold uppercase">Future</div>
+            <div class="text-lg font-extrabold mt-1">미래 시뮬</div>
+            <div class="text-xs text-emerald-100 mt-2">적립식 투자 + 배당 재투자 복리</div>
+          </div>
+          <div class="bg-amber-500 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-amber-50 font-bold uppercase">Dividend</div>
+            <div class="text-lg font-extrabold mt-1">배당(세후)</div>
+            <div class="text-xs text-amber-50 mt-2">분기배당도 월 배당처럼 보기 좋게</div>
+          </div>
+          <div class="bg-indigo-600 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-indigo-100 font-bold uppercase">Region</div>
+            <div class="text-lg font-extrabold mt-1">나라별 정책</div>
+            <div class="text-xs text-indigo-100 mt-2">통화/세금/환율 정책을 region으로 분리</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ticker Quick Links -->
+    <section class="mt-10">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900">티커별 바로가기</h2>
+          <p class="text-slate-600 mt-1">가이드(SEO) → 계산기(전환) 흐름으로 구성하는 걸 추천</p>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2 bg-white border rounded-2xl px-4 py-2 shadow-sm">
+          <span class="text-xs text-slate-500 font-bold">검색</span>
+          <input id="tickerSearch" class="text-sm outline-none w-56" placeholder="SCHD, SPY, QQQ..." />
+        </div>
+      </div>
+
+      <!-- ✅ cards: 설명 줄 수 상관없이 버튼 위치 고정 -->
+      <div id="tickerGrid" class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+        <!-- Card: SCHD -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="SCHD">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">Dividend ETF</div>
+              <div class="text-2xl font-extrabold text-slate-900">SCHD</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-blue-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            배당 성장 + 분기배당. 장기 적립식 백테스트에 적합.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/kr/schd/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              가이드 (KR) 보기
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=kr&ticker=SCHD" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
+              <a href="/future/?region=kr&ticker=SCHD" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: SPY -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="SPY">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">S&P 500</div>
+              <div class="text-2xl font-extrabold text-slate-900">SPY</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-emerald-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            미국 대표 지수 ETF. 장기 시장 수익률 기준으로 많이 비교.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/kr/spy/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              가이드 (KR) 보기
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=kr&ticker=SPY" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
+              <a href="/future/?region=kr&ticker=SPY" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: QQQ -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="QQQ">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">NASDAQ 100</div>
+              <div class="text-2xl font-extrabold text-slate-900">QQQ</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-amber-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            성장주 중심. 배당 비중은 낮지만 백테스트/미래 시뮬은 동일하게 가능.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/kr/qqq/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              가이드 (KR) 보기
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=kr&ticker=QQQ" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
+              <a href="/future/?region=kr&ticker=QQQ" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: TQQQ -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="TQQQ">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">3x Leverage</div>
+              <div class="text-2xl font-extrabold text-slate-900">TQQQ</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-indigo-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            변동성 매우 큼. 장기 적립식 결과가 크게 흔들릴 수 있어 가이드가 특히 중요.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/kr/tqqq/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              가이드 (KR) 보기
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=kr&ticker=TQQQ" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
+              <a href="/future/?region=kr&ticker=TQQQ" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add more tickers as needed -->
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="text-slate-900 font-extrabold">배당은 어떻게 반영돼요?</div>
+        <p class="text-slate-600 text-sm mt-2">
+          배당 이벤트 날짜에 주당 배당금(세후)을 반영하고, DRIP 옵션이면 배당금으로 추가 매수합니다.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="text-slate-900 font-extrabold">환율은 왜 필요한가요?</div>
+        <p class="text-slate-600 text-sm mt-2">
+          KR 사용자는 “원화로 매수 → 달러로 환산 → ETF 매수”가 되기 때문에, 매수일 환율이 결과에 영향을 줍니다.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="text-slate-900 font-extrabold">QQQ는 배당이 적은데 의미 있나요?</div>
+        <p class="text-slate-600 text-sm mt-2">
+          의미 있어요. 배당이 작아도 “누적매수 + 가격변화”로 성과를 확인할 수 있고, 비교 기준으로 많이 사용합니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 py-8 text-center text-xs text-gray-400 border-t">
+      <div>© <span id="yy"></span> MyValuePick · ETF Backtest & Simulator</div>
+      <div class="mt-2">
+        <a class="hover:text-blue-600" href="/privacy.html">Privacy</a>
+        <span class="mx-2">·</span>
+        <a class="hover:text-blue-600" href="/disclaimer.html">Disclaimer</a>
+        <span class="mx-2">·</span>
+        <a class="hover:text-blue-600" href="/contact.html">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("yy").innerText = new Date().getFullYear();
+
+    // Simple ticker search filter
+    const input = document.getElementById("tickerSearch");
+    const cards = Array.from(document.querySelectorAll(".ticker-card"));
+
+    if (input) {
+      input.addEventListener("input", () => {
+        const q = input.value.trim().toUpperCase();
+        for (const c of cards) {
+          const t = (c.dataset.ticker || "").toUpperCase();
+          c.style.display = (!q || t.includes(q)) ? "" : "none";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

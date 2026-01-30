@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://myvaluepick.com/SCHD.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://myvaluepick.com/SCHD_EN.html"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://myvaluepick.com/SCHD.html"/>
-    <lastmod>2026-01-23</lastmod>
-    <priority>1.0</priority>
-  </url>
-  
-  <url>
-    <loc>https://myvaluepick.com/SCHD_EN.html</loc>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://myvaluepick.com/SCHD.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://myvaluepick.com/SCHD_EN.html"/>
-    <lastmod>2026-01-23</lastmod>
-    <priority>0.8</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://myvaluepick.com/kr/</loc></url>
+  <url><loc>https://myvaluepick.com/us/</loc></url>
+  <url><loc>https://myvaluepick.com/ca/</loc></url>
+  <url><loc>https://myvaluepick.com/backtest/</loc></url>
+  <url><loc>https://myvaluepick.com/future/</loc></url>
+  <url><loc>https://myvaluepick.com/kr/schd/</loc></url>
+  <url><loc>https://myvaluepick.com/kr/qqq/</loc></url>
+  <url><loc>https://myvaluepick.com/kr/spy/</loc></url>
+  <url><loc>https://myvaluepick.com/us/schd/</loc></url>
+  <url><loc>https://myvaluepick.com/us/qqq/</loc></url>
+  <url><loc>https://myvaluepick.com/us/spy/</loc></url>
+  <url><loc>https://myvaluepick.com/ca/schd/</loc></url>
+  <url><loc>https://myvaluepick.com/ca/qqq/</loc></url>
+  <url><loc>https://myvaluepick.com/ca/spy/</loc></url>
 </urlset>

@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://myvaluepick.com/sitemap.xml

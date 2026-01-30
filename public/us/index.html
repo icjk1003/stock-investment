@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>MyValuePick | ETF Backtest & Portfolio Simulator</title>
+  <meta name="description" content="Backtest recurring buys and simulate future growth for ETFs like SCHD, SPY, QQQ, TQQQ. View tables/charts with dividends, taxes, and region settings." />
+
+  <link rel="canonical" href="/us/" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+    body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+
+    /* ✅ Description fixed to 2 lines so buttons align */
+    .clamp-2{
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    #tickerGrid{
+      grid-auto-rows: 1fr;
+      align-items: stretch;
+    }
+  </style>
+</head>
+
+<body class="p-4 md:p-8">
+  <div class="max-w-6xl mx-auto">
+    <!-- Top Nav -->
+    <div class="flex items-center justify-between mb-6">
+      <a href="/us/" class="flex items-center gap-2">
+        <div class="h-9 w-9 rounded-2xl bg-blue-600"></div>
+        <div>
+          <div class="font-extrabold text-slate-900 leading-tight">MyValuePick</div>
+          <div class="text-[11px] text-slate-500 -mt-0.5">ETF Backtest · Future Simulator</div>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <a href="/backtest/?region=us&ticker=SCHD" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">Backtest</a>
+        <span class="text-slate-300">·</span>
+        <a href="/future/?region=us&ticker=SCHD" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">Future</a>
+        <span class="text-slate-300">·</span>
+        <a href="/us/" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">US Guide</a>
+
+        <div class="ml-3 flex items-center gap-1 bg-white border rounded-xl px-2 py-1 shadow-sm">
+          <span class="text-[11px] text-slate-500 font-semibold">Region</span>
+          <a href="/kr/" class="text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">KR</a>
+          <a href="/us/" class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-900 text-white">US</a>
+          <a href="/ca/" class="text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">CA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="bg-white border border-gray-100 rounded-3xl p-8 md:p-10 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">
+            ETF Calculator<br/>
+            <span class="text-blue-600">Backtest + Future Simulator</span>
+          </h1>
+          <p class="text-slate-600 mt-4 leading-relaxed">
+            Pick a ticker (SCHD / SPY / QQQ / TQQQ) and see<br/>
+            recurring-buy backtests and forward simulations<br/>
+            with clear tables and charts.
+          </p>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <a href="/backtest/?region=us&ticker=SCHD" class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
+              ✅ Start Backtest
+            </a>
+            <a href="/future/?region=us&ticker=SCHD" class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition">
+              ✅ Start Future Sim
+            </a>
+          </div>
+
+          <div class="mt-4 text-xs text-slate-400">
+            * Data can be served via server-side functions to avoid CORS (price/dividend/fx).
+          </div>
+        </div>
+
+        <!-- Right mini cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-300 font-bold uppercase">Backtest</div>
+            <div class="text-lg font-extrabold mt-1">Recurring Buys</div>
+            <div class="text-xs text-slate-300 mt-2">Daily/Monthly buys, dividends & taxes</div>
+          </div>
+          <div class="bg-emerald-600 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-emerald-100 font-bold uppercase">Future</div>
+            <div class="text-lg font-extrabold mt-1">Forward Sim</div>
+            <div class="text-xs text-emerald-100 mt-2">Contribution + dividend reinvest</div>
+          </div>
+          <div class="bg-amber-500 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-amber-50 font-bold uppercase">Dividend</div>
+            <div class="text-lg font-extrabold mt-1">After-tax</div>
+            <div class="text-xs text-amber-50 mt-2">Track payout flows clearly</div>
+          </div>
+          <div class="bg-indigo-600 text-white rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-indigo-100 font-bold uppercase">Region</div>
+            <div class="text-lg font-extrabold mt-1">Policies</div>
+            <div class="text-xs text-indigo-100 mt-2">Different rules per region</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ticker Quick Links -->
+    <section class="mt-10">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900">Quick Ticker Links</h2>
+          <p class="text-slate-600 mt-1">Guide (SEO) → Calculator (conversion) flow</p>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2 bg-white border rounded-2xl px-4 py-2 shadow-sm">
+          <span class="text-xs text-slate-500 font-bold">Search</span>
+          <input id="tickerSearch" class="text-sm outline-none w-56" placeholder="SCHD, SPY, QQQ..." />
+        </div>
+      </div>
+
+      <div id="tickerGrid" class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+        <!-- SCHD -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="SCHD">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">Dividend ETF</div>
+              <div class="text-2xl font-extrabold text-slate-900">SCHD</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-blue-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            Dividend growth focused ETF. Often used for long-term DCA + reinvest.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/us/schd/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide (US)
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=us&ticker=SCHD" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/?region=us&ticker=SCHD" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- SPY -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="SPY">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">S&P 500</div>
+              <div class="text-2xl font-extrabold text-slate-900">SPY</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-emerald-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            The classic US market benchmark. Widely used as a core long-term holding.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/us/spy/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide (US)
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=us&ticker=SPY" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/?region=us&ticker=SPY" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- QQQ -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="QQQ">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">NASDAQ 100</div>
+              <div class="text-2xl font-extrabold text-slate-900">QQQ</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-amber-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            Growth/tech tilted. Lower yield, performance mostly from price return.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/us/qqq/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide (US)
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=us&ticker=QQQ" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/?region=us&ticker=QQQ" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- TQQQ -->
+        <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="TQQQ">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-500 font-bold uppercase">3x Leverage</div>
+              <div class="text-2xl font-extrabold text-slate-900">TQQQ</div>
+            </div>
+            <div class="h-10 w-10 rounded-2xl bg-indigo-100"></div>
+          </div>
+
+          <p class="text-slate-600 text-sm mt-3 clamp-2">
+            Very high volatility. Path-dependence and drawdowns can be extreme.
+          </p>
+
+          <div class="mt-auto pt-4">
+            <a href="/us/tqqq/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide (US)
+            </a>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <a href="/backtest/?region=us&ticker=TQQQ" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/?region=us&ticker=TQQQ" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="text-slate-900 font-extrabold">How do dividends work?</div>
+        <p class="text-slate-600 text-sm mt-2">
+          We apply per-share dividends on payout dates. If DRIP is enabled, dividends buy additional shares.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="text-slate-900 font-extrabold">Do I need FX?</div>
+        <p class="text-slate-600 text-sm mt-2">
+          US region typically uses USD only. FX is mainly needed when modeling non-USD investors.
+        </p>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="text-slate-900 font-extrabold">QQQ has low dividends — still useful?</div>
+        <p class="text-slate-600 text-sm mt-2">
+          Yes. Even with low yield, recurring buys + price returns are meaningful for comparisons and planning.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 py-8 text-center text-xs text-gray-400 border-t">
+      <div>© <span id="yy"></span> MyValuePick · ETF Backtest & Simulator</div>
+      <div class="mt-2">
+        <a class="hover:text-blue-600" href="/privacy.html">Privacy</a>
+        <span class="mx-2">·</span>
+        <a class="hover:text-blue-600" href="/disclaimer.html">Disclaimer</a>
+        <span class="mx-2">·</span>
+        <a class="hover:text-blue-600" href="/contact.html">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("yy").innerText = new Date().getFullYear();
+
+    const input = document.getElementById("tickerSearch");
+    const cards = Array.from(document.querySelectorAll(".ticker-card"));
+    if (input) {
+      input.addEventListener("input", () => {
+        const q = input.value.trim().toUpperCase();
+        for (const c of cards) {
+          const t = (c.dataset.ticker || "").toUpperCase();
+          c.style.display = (!q || t.includes(q)) ? "" : "none";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

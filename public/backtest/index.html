@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backtest | MyValuePick</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/assets/ui.css" />
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <div class="flex items-center justify-between">
+      <a href="/" class="font-black text-xl">MyValuePick</a>
+      <div class="flex gap-3 text-sm font-bold text-slate-600">
+        <a data-nav="home" href="/kr/">KR</a>
+        <a data-nav="home" href="/us/">US</a>
+        <a data-nav="home" href="/ca/">CA</a>
+      </div>
+    </div>
+
+    <h1 class="mt-6 text-3xl font-black">Backtest Calculator</h1>
+    <p class="mt-2 text-slate-600">This page is the shared calculator: /backtest/?region=kr&ticker=SCHD</p>
+
+    <div class="mt-6 bg-white border rounded-3xl p-6">
+      <p class="text-sm text-slate-500">✅ 여기에는 네가 가지고 있는 schd_backtest_kr / schd_backtest_en 로직을 <b>assets/backtest.js</b>로 옮겨와서 공용화하면 됨.</p>
+      <p class="text-sm text-slate-500 mt-2">이번 압축은 “정상 압축” + “정리된 폴더 구조” 제공이 목적이라, backtest.js는 최소 스텁으로 넣었어.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getContext, applyI18n } from "/assets/app.js";
+    const ctx = getContext();
+    document.documentElement.lang = ctx.lang;
+    applyI18n(ctx.dict);
+  </script>
+</body>
+</html>
