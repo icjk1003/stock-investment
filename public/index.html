@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MyValuePick</title>
+  <meta name="description" content="Select region: KR / US / CA" />
+  <style>
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0b1220; color:#e5e7eb; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 48px 16px; }
+    .card { background:#111a2e; border:1px solid #24314d; border-radius:16px; padding:24px; }
+    h1 { margin:0 0 10px; font-size: 28px; }
+    p { margin:0 0 18px; opacity: .85; }
+    .btns { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    a.btn {
+      display:block; text-align:center; padding:14px 12px;
+      border-radius:12px; text-decoration:none;
+      background:#1a2642; border:1px solid #2a3a5e; color:#e5e7eb;
+      font-weight:600;
+    }
+    a.btn:hover { background:#223356; }
+    .note { margin-top: 12px; font-size: 13px; opacity:.75; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>MyValuePick</h1>
+      <p>국가(Region)를 선택하세요.</p>
+
+      <div class="btns">
+        <a class="btn" href="/kr">🇰🇷 KR</a>
+        <a class="btn" href="/us">🇺🇸 US</a>
+        <a class="btn" href="/ca">🇨🇦 CA</a>
+      </div>
+
+      <div class="note">
+        버튼을 누르면 해당 국가 폴더의 index.html로 이동합니다. (예: /kr/ → /kr/index.html)
+      </div>
+    </div>
+  </div>
+</body>
+</html>
