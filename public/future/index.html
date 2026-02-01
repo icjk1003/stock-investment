@@ -3,21 +3,60 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Future Simulator | MyValuePick</title>
+  <meta name="description" content="Future simulator with DRIP, dividend growth, price growth and tax. Shared page by region/ticker." />
+
+  <link rel="canonical" href="/future/" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="/assets/ui.css" />
 </head>
+
 <body class="bg-slate-50 text-slate-900">
   <div class="max-w-6xl mx-auto px-4 py-6">
-    <a href="/" class="font-black text-xl">MyValuePick</a>
-    <h1 class="mt-6 text-3xl font-black">Future Simulator</h1>
-    <p class="mt-2 text-slate-600">Shared calculator: /future/?region=kr&ticker=SCHD</p>
+    <!-- Top Nav (Region only) -->
+    <div class="flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <div class="h-9 w-9 rounded-2xl bg-blue-600"></div>
+        <div>
+          <div class="font-extrabold text-slate-900 leading-tight" data-i18n="siteName">MyValuePick</div>
+          <div class="text-[11px] text-slate-500 -mt-0.5">ETF Future · Simulator</div>
+        </div>
+      </a>
+
+      <div class="flex items-center">
+        <div class="flex items-center gap-1 bg-white border rounded-xl px-2 py-1 shadow-sm">
+          <span class="text-[11px] text-slate-500 font-semibold">Region</span>
+          <a href="/kr/" data-region="kr" class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">KR</a>
+          <a href="/us/" data-region="us" class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">US</a>
+          <a href="/ca/" data-region="ca" class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">CA</a>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="mt-6 text-3xl font-black" data-i18n="futureTitle">Future Simulator</h1>
+    <p class="mt-2 text-slate-600" data-i18n="futureDesc">Shared calculator: /future/?region=kr&ticker=SCHD</p>
+
+    <!-- ✅ 공용 future UI 렌더링 -->
+    <div id="app" class="mt-6"></div>
+
+    <footer class="mt-14 py-8 text-center text-xs text-slate-400 border-t">
+      <div data-i18n="commonDisclaimer">For informational purposes only...</div>
+    </footer>
   </div>
+
   <script type="module">
-    import { getContext } from "/assets/app.js";
+    import { getContext, applyI18n, applyActiveRegion, bindRegionNav } from "/assets/app.js";
+    import { initFuture } from "/assets/future.js";
+
     const ctx = getContext();
     document.documentElement.lang = ctx.lang;
+
+    applyI18n(ctx.dict);
+    applyActiveRegion(ctx.region.code);
+    bindRegionNav(ctx);
+
+    initFuture(document.getElementById("app"), ctx);
   </script>
 </body>
 </html>

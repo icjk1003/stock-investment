@@ -39,18 +39,16 @@
         </div>
       </a>
 
-      <div class="flex items-center gap-2">
-        <a href="/backtest/?region=ca&ticker=SCHD" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">Backtest</a>
-        <span class="text-slate-300">·</span>
-        <a href="/future/?region=ca&ticker=SCHD" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">Future</a>
-        <span class="text-slate-300">·</span>
-        <a href="/ca/" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition">CA Guide</a>
-
-        <div class="ml-3 flex items-center gap-1 bg-white border rounded-xl px-2 py-1 shadow-sm">
+      <!-- ✅ Region only (auto-active by JS) -->
+      <div class="flex items-center">
+        <div class="flex items-center gap-1 bg-white border rounded-xl px-2 py-1 shadow-sm">
           <span class="text-[11px] text-slate-500 font-semibold">Region</span>
-          <a href="/kr/" class="text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">KR</a>
-          <a href="/us/" class="text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">US</a>
-          <a href="/ca/" class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-900 text-white">CA</a>
+          <a href="/kr/" data-region="kr"
+             class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">KR</a>
+          <a href="/us/" data-region="us"
+             class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">US</a>
+          <a href="/ca/" data-region="ca"
+             class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">CA</a>
         </div>
       </div>
     </div>
@@ -70,10 +68,13 @@
           </p>
 
           <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <a href="/backtest/?region=ca&ticker=SCHD" class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
+            <!-- ✅ region is injected by JS -->
+            <a href="/backtest/" data-go="backtest" data-ticker="SCHD"
+               class="go-link inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
               ✅ Start Backtest
             </a>
-            <a href="/future/?region=ca&ticker=SCHD" class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition">
+            <a href="/future/" data-go="future" data-ticker="SCHD"
+               class="go-link inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition">
               ✅ Start Future Sim
             </a>
           </div>
@@ -139,12 +140,15 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/ca/schd/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
-              View Guide (CA)
+            <a href="/ca/schd/" data-go="guide" data-ticker="SCHD"
+               class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/?region=ca&ticker=SCHD" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
-              <a href="/future/?region=ca&ticker=SCHD" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+              <a href="/backtest/" data-go="backtest" data-ticker="SCHD"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/" data-go="future" data-ticker="SCHD"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
             </div>
           </div>
         </div>
@@ -164,12 +168,15 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/ca/spy/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
-              View Guide (CA)
+            <a href="/ca/spy/" data-go="guide" data-ticker="SPY"
+               class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/?region=ca&ticker=SPY" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
-              <a href="/future/?region=ca&ticker=SPY" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+              <a href="/backtest/" data-go="backtest" data-ticker="SPY"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/" data-go="future" data-ticker="SPY"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
             </div>
           </div>
         </div>
@@ -189,12 +196,15 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/ca/qqq/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
-              View Guide (CA)
+            <a href="/ca/qqq/" data-go="guide" data-ticker="QQQ"
+               class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/?region=ca&ticker=QQQ" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
-              <a href="/future/?region=ca&ticker=QQQ" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+              <a href="/backtest/" data-go="backtest" data-ticker="QQQ"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/" data-go="future" data-ticker="QQQ"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
             </div>
           </div>
         </div>
@@ -214,12 +224,15 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/ca/tqqq/" class="block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
-              View Guide (CA)
+            <a href="/ca/tqqq/" data-go="guide" data-ticker="TQQQ"
+               class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              View Guide
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/?region=ca&ticker=TQQQ" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
-              <a href="/future/?region=ca&ticker=TQQQ" class="text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
+              <a href="/backtest/" data-go="backtest" data-ticker="TQQQ"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">Backtest</a>
+              <a href="/future/" data-go="future" data-ticker="TQQQ"
+                 class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">Future</a>
             </div>
           </div>
         </div>
@@ -262,8 +275,11 @@
   </div>
 
   <script>
-    document.getElementById("yy").innerText = new Date().getFullYear();
+    // Footer year
+    const yyEl = document.getElementById("yy");
+    if (yyEl) yyEl.innerText = new Date().getFullYear();
 
+    // Simple ticker search filter
     const input = document.getElementById("tickerSearch");
     const cards = Array.from(document.querySelectorAll(".ticker-card"));
     if (input) {
@@ -275,6 +291,95 @@
         }
       });
     }
+
+    // ---- Region / routing (single source of truth) ----
+    const VALID_REGIONS = new Set(["kr", "us", "ca"]);
+
+    function detectRegion() {
+      const path = (location.pathname || "/").toLowerCase();
+      const sp = new URLSearchParams(location.search);
+      const qRegion = (sp.get("region") || "").toLowerCase();
+      if (VALID_REGIONS.has(qRegion)) return qRegion;
+
+      if (path === "/kr" || path.startsWith("/kr/")) return "kr";
+      if (path === "/us" || path.startsWith("/us/")) return "us";
+      if (path === "/ca" || path.startsWith("/ca/")) return "ca";
+      return "ca"; // CA page default
+    }
+
+    function applyActiveRegion(region) {
+      document.querySelectorAll(".region-btn[data-region]").forEach(btn => {
+        const r = (btn.getAttribute("data-region") || "").toLowerCase();
+        if (r === region) {
+          btn.classList.add("bg-slate-900", "text-white");
+          btn.classList.remove("hover:bg-slate-100");
+        } else {
+          btn.classList.remove("bg-slate-900", "text-white");
+          btn.classList.add("hover:bg-slate-100");
+        }
+      });
+    }
+
+    // /ca/... -> /us/... (prefix swap)
+    function swapRegionPrefix(pathname, targetRegion) {
+      const path = (pathname || "/").toLowerCase();
+      const m = path.match(/^\/(kr|us|ca)(\/.*)?$/);
+      if (m) return `/${targetRegion}${m[2] || "/"}`;
+      return `/${targetRegion}/`;
+    }
+
+    // Region switch URL builder
+    function buildRegionSwitchUrl(targetRegion) {
+      const path = (location.pathname || "/").toLowerCase();
+      const sp = new URLSearchParams(location.search);
+      sp.set("region", targetRegion);
+
+      let nextPath = "/";
+      if (path.startsWith("/backtest/")) nextPath = "/backtest/";
+      else if (path.startsWith("/future/")) nextPath = "/future/";
+      else nextPath = swapRegionPrefix(location.pathname, targetRegion);
+
+      const qs = sp.toString();
+      return qs ? `${nextPath}?${qs}` : nextPath;
+    }
+
+    function bindRegionNav() {
+      document.querySelectorAll(".region-btn[data-region]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const targetRegion = (btn.getAttribute("data-region") || "").toLowerCase();
+          if (!VALID_REGIONS.has(targetRegion)) return;
+          e.preventDefault();
+          location.href = buildRegionSwitchUrl(targetRegion);
+        });
+      });
+    }
+
+    // Build URLs for links with data-go & data-ticker
+    function goUrl(kind, region, ticker) {
+      const t = (ticker || "").trim().toUpperCase();
+      if (kind === "guide") return `/${region}/${t.toLowerCase()}/`;
+      if (kind === "backtest") return `/backtest/?region=${encodeURIComponent(region)}&ticker=${encodeURIComponent(t)}`;
+      if (kind === "future") return `/future/?region=${encodeURIComponent(region)}&ticker=${encodeURIComponent(t)}`;
+      return "/";
+    }
+
+    function bindGoLinks(region) {
+      document.querySelectorAll("[data-go][data-ticker]").forEach(a => {
+        a.addEventListener("click", (e) => {
+          const kind = (a.getAttribute("data-go") || "").toLowerCase();
+          const ticker = a.getAttribute("data-ticker") || "";
+          const url = goUrl(kind, region, ticker);
+          e.preventDefault();
+          location.href = url;
+        });
+      });
+    }
+
+    // ---- init ----
+    const region = detectRegion();
+    applyActiveRegion(region);
+    bindRegionNav();
+    bindGoLinks(region);
   </script>
 </body>
 </html>

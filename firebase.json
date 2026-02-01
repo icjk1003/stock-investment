@@ -11,6 +11,15 @@
     "rewrites": [
       { "source": "/api/fxHistory", "function": "fxHistory" },
       { "source": "/api/schdHistory", "function": "schdHistory" },
+      
+      { "source": "/kr/backtest", "destination": "/backtest/index.html" },
+      { "source": "/us/backtest", "destination": "/backtest/index.html" },
+      { "source": "/ca/backtest", "destination": "/backtest/index.html" },
+
+      { "source": "/kr/future", "destination": "/future/index.html" },
+      { "source": "/us/future", "destination": "/future/index.html" },
+      { "source": "/ca/future", "destination": "/future/index.html" },
+      
       { "source": "/", "destination": "/index.html" }
     ]
   },
