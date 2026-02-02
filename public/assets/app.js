@@ -169,6 +169,26 @@ function swapRegionInPath(targetRegion) {
 }
 
 /**
+ * ✅ header 로고 링크를 "현재 region 홈"으로 자동 교체
+ * - header.html은 href="/"로 고정해도 됨
+ * - 주입 후에 app.js가 /kr/, /us/, /ca/로 교체
+ */
+function patchHeaderLogoHref(regionCode) {
+  const r = normalizeRegion(regionCode) || DEFAULT_REGION;
+
+  // header.html: <a href="/" class="flex items-center gap-2"> ... </a>
+  // 가장 안전하게: header slot 내부의 첫번째 링크 중 href="/"인 것만 교체
+  document.querySelectorAll('a[href="/"]').forEach((a) => {
+    const cls = a.getAttribute("class") || "";
+    // 로고 링크(상단 왼쪽)만 타겟팅: class에 "flex items-center"가 들어가는 케이스가 많음
+    // (혹시 다른 "/" 링크가 있어도 최소한의 오작동을 줄이기 위한 조건)
+    if (cls.includes("flex") && cls.includes("items-center")) {
+      a.setAttribute("href", `/${r}/`);
+    }
+  });
+}
+
+/**
  * ✅ Region 버튼 클릭 정책 (통일)
  * - localStorage(mvp_region)에 저장
  * - 현재 경로 유지 + region prefix만 교체
@@ -246,15 +266,19 @@ export function bindGoLinks(region) {
 
 /**
  * ✅ 페이지 공통 부트스트랩
- * - partial 주입 -> ctx -> i18n -> region active -> nav 바인딩 -> go링크 바인딩
+ * - partial 주입 -> ctx -> i18n -> header logo href 패치 -> region active -> nav 바인딩 -> go링크 바인딩
  */
 export async function boot() {
   await injectPartials();
 
   const ctx = getContext();
 
-  // header partial 들어온 뒤 적용
+  // 주입된 header에 대해 i18n / 링크 패치 / region 처리
   applyI18n(ctx.dict);
+
+  // ✅ 로고 href를 현재 region 홈으로 자동 교체
+  patchHeaderLogoHref(ctx.region.code);
+
   applyActiveRegion(ctx.region.code);
 
   bindRegionNav(ctx);

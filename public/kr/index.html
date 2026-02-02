@@ -7,9 +7,7 @@
   <title>MyValuePick | ETF 백테스트 & 배당/자산 시뮬레이터</title>
   <meta name="description" content="SCHD, SPY, QQQ, TQQQ 등 ETF 백테스트(과거 누적매수)와 미래 자산 시뮬레이션을 표/그래프로 확인하세요. 배당(세후)·환율·세금 정책 반영." />
 
-  <!-- ✅ kr 홈은 /kr/ -->
   <link rel="canonical" href="/kr/" />
-
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
@@ -33,7 +31,7 @@
 
 <body class="p-4 md:p-8">
   <div class="max-w-6xl mx-auto">
-    <!-- ✅ Header partial slot -->
+    <!-- ✅ Header partial -->
     <div data-partial="header"></div>
 
     <!-- Hero -->
@@ -51,11 +49,11 @@
           </p>
 
           <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <a href="/kr/tools/backtest/?ticker=SCHD" data-go="backtest" data-ticker="SCHD"
+            <a href="/kr/" data-go="backtest" data-ticker="SCHD"
                class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
               ✅ 바로 백테스트 시작
             </a>
-            <a href="/kr/tools/future/?ticker=SCHD" data-go="future" data-ticker="SCHD"
+            <a href="/kr/" data-go="future" data-ticker="SCHD"
                class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition">
               ✅ 미래 시뮬 시작
             </a>
@@ -107,7 +105,8 @@
       </div>
 
       <div id="tickerGrid" class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-        <!-- Card: SCHD -->
+
+        <!-- SCHD -->
         <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="SCHD">
           <div class="flex items-center justify-between">
             <div>
@@ -122,24 +121,24 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/guide/nasdaq/ticker/schd/" data-go="guide" data-market="nasdaq" data-ticker="SCHD"
+            <a href="/kr/" data-go="guide" data-market="nasdaq" data-ticker="SCHD"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/kr/tools/backtest/?ticker=SCHD" data-go="backtest" data-ticker="SCHD"
+              <a href="/kr/" data-go="backtest" data-ticker="SCHD"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/kr/tools/future/?ticker=SCHD" data-go="future" data-ticker="SCHD"
+              <a href="/kr/" data-go="future" data-ticker="SCHD"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
         </div>
 
-        <!-- Card: SPY -->
+        <!-- SPY -->
         <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="SPY">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-xs text-slate-500 font-bold uppercase">S&P 500</div>
+              <div class="text-xs text-slate-500 font-bold uppercase">S&amp;P 500</div>
               <div class="text-2xl font-extrabold text-slate-900">SPY</div>
             </div>
             <div class="h-10 w-10 rounded-2xl bg-emerald-100"></div>
@@ -150,20 +149,20 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/guide/nasdaq/ticker/spy/" data-go="guide" data-market="nasdaq" data-ticker="SPY"
+            <a href="/kr/" data-go="guide" data-market="nasdaq" data-ticker="SPY"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/kr/tools/backtest/?ticker=SPY" data-go="backtest" data-ticker="SPY"
+              <a href="/kr/" data-go="backtest" data-ticker="SPY"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/kr/tools/future/?ticker=SPY" data-go="future" data-ticker="SPY"
+              <a href="/kr/" data-go="future" data-ticker="SPY"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
         </div>
 
-        <!-- Card: QQQ -->
+        <!-- QQQ -->
         <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="QQQ">
           <div class="flex items-center justify-between">
             <div>
@@ -178,20 +177,20 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/guide/nasdaq/ticker/qqq/" data-go="guide" data-market="nasdaq" data-ticker="QQQ"
+            <a href="/kr/" data-go="guide" data-market="nasdaq" data-ticker="QQQ"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/kr/tools/backtest/?ticker=QQQ" data-go="backtest" data-ticker="QQQ"
+              <a href="/kr/" data-go="backtest" data-ticker="QQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/kr/tools/future/?ticker=QQQ" data-go="future" data-ticker="QQQ"
+              <a href="/kr/" data-go="future" data-ticker="QQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
         </div>
 
-        <!-- Card: TQQQ -->
+        <!-- TQQQ -->
         <div class="ticker-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col h-full" data-ticker="TQQQ">
           <div class="flex items-center justify-between">
             <div>
@@ -206,14 +205,14 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/guide/nasdaq/ticker/tqqq/" data-go="guide" data-market="nasdaq" data-ticker="TQQQ"
+            <a href="/kr/" data-go="guide" data-market="nasdaq" data-ticker="TQQQ"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/kr/tools/backtest/?ticker=TQQQ" data-go="backtest" data-ticker="TQQQ"
+              <a href="/kr/" data-go="backtest" data-ticker="TQQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/kr/tools/future/?ticker=TQQQ" data-go="future" data-ticker="TQQQ"
+              <a href="/kr/" data-go="future" data-ticker="TQQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
@@ -244,27 +243,20 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="mt-16 py-8 text-center text-xs text-gray-400 border-t">
-      <div>© <span id="yy"></span> MyValuePick · ETF Backtest & Simulator</div>
-      <div class="mt-2">
-        <a class="hover:text-blue-600" href="/privacy.html">Privacy</a>
-        <span class="mx-2">·</span>
-        <a class="hover:text-blue-600" href="/disclaimer.html">Disclaimer</a>
-        <span class="mx-2">·</span>
-        <a class="hover:text-blue-600" href="/contact.html">Contact</a>
-      </div>
-    </footer>
+    <!-- ✅ Footer partial -->
+    <div data-partial="footer"></div>
   </div>
 
   <script type="module">
     import { boot } from "/assets/app.js";
 
-    // footer year
+    await boot();
+
+    // Footer year
     const yyEl = document.getElementById("yy");
     if (yyEl) yyEl.innerText = new Date().getFullYear();
 
-    // simple ticker search filter
+    // Simple ticker search filter (page-only)
     const input = document.getElementById("tickerSearch");
     const cards = Array.from(document.querySelectorAll(".ticker-card"));
     if (input) {
@@ -276,9 +268,6 @@
         }
       });
     }
-
-    // init (partials 포함 전체 부트)
-    await boot();
   </script>
 </body>
 </html>
