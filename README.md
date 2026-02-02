@@ -1,8 +1,6 @@
 # stock-investment
 stock investment
 
-
-
 / (root)
 ├─ index.html                      # 해당 국가로 자동 리다이렉트 
 ├─ robots.txt
@@ -34,7 +32,7 @@ stock investment
 │     ├─ nasdaq
 │     │  └─ ticker
 │     │      ├─ schd/
-│     │      │  └─ index.html          # SCHD 실적 발표일, 주가, 주가 성장률 배당일, 배당금, 배당 성장률, 백테스트, 미래시뮬, 글 올리기 기능 넣기(글 포스팅), 조회수, 좋아요 포스팅 날짜
+│     │      │  └─ index.html       # SCHD 실적 발표일, 주가, 주가 성장률 배당일, 배당금, 배당 성장률, 백테스트, 미래시뮬, 글 올리기 기능 넣기(글 포스팅), 조회수, 좋아요 포스팅 날짜
 │     │      ├─ spy/
 │     │      │  └─ index.html
 │     │      ├─ qqq/

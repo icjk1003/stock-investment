@@ -6,10 +6,11 @@
   <title>SCHD 가이드 (KR) | 배당성장 ETF 백테스트 · 미래 시뮬레이터</title>
   <meta name="description" content="SCHD(배당성장 ETF) 가이드. KR 기준(세금/환율 반영)으로 백테스트/미래 시뮬을 확인하세요." />
 
-  <link rel="canonical" href="https://myvaluepick.com/kr/schd/" />
-  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/schd/" />
-  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/schd/" />
-  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/kr/schd/" />
+  <!-- ✅ 실제 경로 기준으로 canonical/alternate 정리 -->
+  <link rel="canonical" href="https://myvaluepick.com/kr/guide/nasdaq/ticker/schd/" />
+  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/guide/nasdaq/ticker/schd/" />
+  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
+  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,19 +21,9 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900">
-  <!-- Top Nav (텍스트 100% 동일) -->
-  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-    <a href="/kr/" class="flex items-center gap-2">
-      <div class="w-9 h-9 rounded-xl bg-amber-500"></div>
-      <div class="font-extrabold text-lg">MyValuePick</div>
-      <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">KR</span>
-    </a>
-    <div class="flex items-center gap-2">
-      <a href="/kr/" class="text-sm font-bold text-slate-500 hover:text-amber-600 transition">홈</a>
-      <a href="/backtest/?region=kr&ticker=SCHD" class="text-sm font-bold text-slate-500 hover:text-amber-600 transition">백테스트</a>
-      <a href="/future/?region=kr&ticker=SCHD" class="text-sm font-bold text-slate-500 hover:text-amber-600 transition">미래시뮬</a>
-      <a href="/us/schd/" class="text-sm font-extrabold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl hover:bg-amber-100 transition">EN</a>
-    </div>
+  <div class="max-w-6xl mx-auto px-4 py-4">
+    <!-- ✅ KR index.html과 동일한 header를 partial로 주입 -->
+    <div data-partial="header"></div>
   </div>
 
   <!-- Hero -->
@@ -49,12 +40,13 @@
             배당을 “생활비”로 보기보다는, <b>배당 성장 + 가격(총수익)</b>을 함께 보는 관점이 중요합니다.
           </p>
         </div>
+
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <a href="/backtest/?region=kr&ticker=SCHD"
+          <a href="/kr/tools/backtest/?ticker=SCHD"
              class="text-center px-5 py-3 rounded-2xl bg-amber-500 text-white font-extrabold hover:bg-amber-600 transition">
             SCHD 백테스트 →
           </a>
-          <a href="/future/?region=kr&ticker=SCHD"
+          <a href="/kr/tools/future/?ticker=SCHD"
              class="text-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-extrabold hover:bg-black transition">
             SCHD 미래시뮬 →
           </a>
@@ -141,14 +133,14 @@
         </div>
       </div>
 
-      <!-- ✅ 이런 사람에게 / 주의할 점 (QQQ와 동일 블록, 누락 금지) -->
+      <!-- ✅ 이런 사람에게 / 주의할 점 -->
       <div class="mt-8 grid md:grid-cols-2 gap-4">
         <div class="rounded-3xl bg-emerald-50 border border-emerald-100 p-6">
           <h3 class="text-lg font-black text-emerald-800">👍 이런 사람에게 잘 맞아요</h3>
           <ul class="mt-3 space-y-2 text-sm text-emerald-900/80 list-disc pl-5">
             <li>배당 성장 + 현금흐름을 장기적으로 쌓고 싶은 경우</li>
             <li>변동성을 조금 낮추면서도 주식 비중을 유지하고 싶은 경우</li>
-            <li>고성장”보다 “꾸준함”을 선호하는 경우</li>
+            <li>“고성장”보다 “꾸준함”을 선호하는 경우</li>
           </ul>
         </div>
         <div class="rounded-3xl bg-rose-50 border border-rose-100 p-6">
@@ -161,7 +153,7 @@
         </div>
       </div>
 
-      <!-- ✅ FAQ (텍스트 100% 동일) -->
+      <!-- ✅ FAQ -->
       <div class="mt-8 rounded-3xl bg-white border border-slate-100 p-6 md:p-8">
         <h3 class="text-xl font-black">FAQ</h3>
         <p class="mt-1 text-sm text-slate-500">자주 묻는 질문을 모았어요. (접기/펼치기)</p>
@@ -214,7 +206,7 @@
         </div>
       </div>
 
-      <!-- ✅ 다른 티커 가이드 (텍스트 100% 동일) -->
+      <!-- ✅ 다른 티커 가이드 -->
       <div class="mt-8 rounded-3xl bg-white border border-slate-100 p-6 md:p-8">
         <div class="flex items-center justify-between flex-wrap gap-3">
           <div>
@@ -225,17 +217,17 @@
         </div>
 
         <div class="mt-5 grid md:grid-cols-3 gap-4">
-          <a href="/kr/schd/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+          <a href="/kr/guide/nasdaq/ticker/schd/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
             <div class="text-xs font-black text-slate-500 uppercase">Dividend</div>
             <div class="mt-2 text-lg font-extrabold">SCHD</div>
             <p class="mt-2 text-sm text-slate-600">배당 성장 중심 ETF 가이드</p>
           </a>
-          <a href="/kr/spy/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+          <a href="/kr/guide/nasdaq/ticker/spy/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
             <div class="text-xs font-black text-slate-500 uppercase">Core</div>
             <div class="mt-2 text-lg font-extrabold">SPY</div>
             <p class="mt-2 text-sm text-slate-600">S&P500 대표 ETF 가이드</p>
           </a>
-          <a href="/kr/tqqq/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
+          <a href="/kr/guide/nasdaq/ticker/tqqq/" class="rounded-2xl border border-slate-200 hover:border-amber-300 bg-slate-50 p-5 transition">
             <div class="text-xs font-black text-slate-500 uppercase">Leveraged</div>
             <div class="mt-2 text-lg font-extrabold">TQQQ</div>
             <p class="mt-2 text-sm text-slate-600">레버리지(고위험) 가이드</p>
@@ -246,11 +238,22 @@
     </div>
   </section>
 
-  <!-- Footer (텍스트 100% 동일) -->
-  <footer class="max-w-6xl mx-auto px-4 py-10 text-center text-xs text-slate-400">
-    © 2026 MyValuePick · Contact: icjk1003@gmail.com
-  </footer>
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- ✅ 공통 footer partial -->
+    <div data-partial="footer"></div>
+  </div>
 
+  <!-- ✅ 최신 app.js 부트 -->
+  <script type="module">
+    import { boot } from "/assets/app.js";
+    await boot();
+
+    // footer year
+    const yyEl = document.getElementById("yy");
+    if (yyEl) yyEl.innerText = new Date().getFullYear();
+  </script>
+
+  <!-- ✅ 기존 위젯 스크립트 (그대로 유지) -->
   <script>
     const TICKER = "SCHD";
 
@@ -351,9 +354,7 @@
     }
     function fmtFxLine(fx, dateStr) {
       if (!Number.isFinite(fx) || fx <= 0) return "-";
-      const fxFmt = (REGION.localCcy === "KRW")
-        ? Math.round(fx).toLocaleString("ko-KR")
-        : fx.toLocaleString(REGION.localLocale, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+      const fxFmt = Math.round(fx).toLocaleString("ko-KR");
       return `적용 환율: 1 USD = ${fxFmt} ${REGION.localCcy} (${dateStr})`;
     }
 
@@ -402,10 +403,7 @@
 
       chart = new Chart(ctx, {
         type: "line",
-        data: {
-          labels,
-          datasets: [{ label: TICKER, data: values, pointRadius: 0, borderWidth: 2, fill: false }]
-        },
+        data: { labels, datasets: [{ label: TICKER, data: values, pointRadius: 0, borderWidth: 2, fill: false }] },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -482,8 +480,7 @@
         localValues.push(Number(p.close) * fx);
       }
 
-      const yPrefix = (REGION.localCcy === "KRW") ? "₩" : "";
-      drawChart(localLabels, localValues, yPrefix);
+      drawChart(localLabels, localValues, "₩");
       status.innerText = `완료 (${REGION.localCcy}, ${REGION.fxPairLabel} 적용)`;
     }
 
@@ -544,7 +541,6 @@
           }
         }
 
-        // ✅ KR 기본은 LOCAL이지만 fx가 없으면 USD로 자동 다운그레이드
         if (displayCurrencyMode === "LOCAL" && !fxOk) displayCurrencyMode = "USD";
 
         updateToggleUI();
