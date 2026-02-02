@@ -4,23 +4,24 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ SEO는 JS로도 바꿀 수 있지만, 최소한의 기본값만 둠 -->
   <title>MyValuePick Guide</title>
   <meta name="description" content="ETF guide page." />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
     body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
   </style>
 </head>
 
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 bg-slate-50 text-slate-900">
   <div class="max-w-6xl mx-auto">
     <div data-partial="header"></div>
 
-    <div id="guideRoot"></div>
+    <!-- ✅ guide template가 여기에 렌더됨 -->
+    <main id="guideRoot"></main>
 
     <div data-partial="footer"></div>
   </div>
@@ -31,22 +32,14 @@
 
     const ctx = await boot();
 
-    // ✅ ticker는 경로(/.../ticker/schd/)에서 자동으로 들어옴 (app.js guessTickerFromPath)
-    const ticker = (ctx.ticker || "SCHD").toUpperCase();
-    const market = "nasdaq";
-
-    // ✅ region별 accent 예시 (원하면 GUIDE_DATA에서 ticker별로도 줄 수 있음)
-    const accentByRegion = {
-      kr: "#f59e0b",
-      us: "#f59e0b",
-      ca: "#f59e0b",
-    };
-    const accent = accentByRegion[(ctx.region.code || "kr").toLowerCase()] || "#f59e0b";
-
-    await renderGuide(ctx, { ticker, market, accent });
-
-    // ✅ (선택) title/description을 데이터로 맞추고 싶으면 GUIDE_DATA 기반으로 여기서 바꾸면 됨.
-    // document.title = `${ticker} Guide (${ctx.region.code.toUpperCase()}) | MyValuePick`;
+    // ✅ ticker를 URL에서 자동 추출 (/.../ticker/schd/ -> SCHD)
+    const ticker = (ctx.ticker || "").toUpperCase();
+    if (!ticker) {
+      document.getElementById("guideRoot").innerHTML =
+        '<div class="rounded-3xl bg-white border border-slate-200 p-6">Ticker not found in URL.</div>';
+    } else {
+      await renderGuide(ctx, { ticker, market: "nasdaq" });
+    }
   </script>
 </body>
 </html>
