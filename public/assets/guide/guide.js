@@ -1,5 +1,6 @@
-// assets/guide/guide.js
+// /assets/guide/guide.js
 import { GUIDE_DATA } from "./guide-data.js";
+import { bindGoLinks } from "/assets/app.js";
 
 function el(id) { return document.getElementById(id); }
 function escapeHtml(s) {
@@ -8,12 +9,35 @@ function escapeHtml(s) {
   }[m]));
 }
 
+function normalizeDateKey(d) { return d ? String(d).slice(0, 10) : null; }
+
+// ✅ FX value picker (그대로)
+function pickFxValue(p) {
+  const v = p?.close ?? p?.rate ?? p?.value ?? p?.fx ?? p?.price ?? p?.adjClose ?? p?.adj_close;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+// ✅ PRICE value picker (중요: 주가 안 뜨는 문제 해결)
+function pickPriceValue(p) {
+  const v =
+    p?.close ??
+    p?.adjClose ??
+    p?.adj_close ??
+    p?.adjclose ??
+    p?.price ??
+    p?.value ??
+    p?.c;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
 // region별 FX 정책
 function getFxPolicy(ctx) {
   const r = (ctx?.region?.code || "kr").toLowerCase();
-  if (r === "kr") return { showFx: true, localCcy: "KRW", locale: "ko-KR", pair: "USDKRW" };
-  if (r === "ca") return { showFx: true, localCcy: "CAD", locale: "en-CA", pair: "USDCAD" };
-  return { showFx: false, localCcy: "USD", locale: "en-US", pair: "USDUSD" };
+  if (r === "kr") return { showFx: true,  localCcy: "KRW", locale: "ko-KR", pair: "USDKRW" };
+  if (r === "ca") return { showFx: true,  localCcy: "CAD", locale: "en-CA", pair: "USDCAD" };
+  return            { showFx: false, localCcy: "USD", locale: "en-US", pair: "USDUSD" };
 }
 
 function fmtPct(v) {
@@ -30,6 +54,7 @@ function fmtLocal(v, currency, locale) {
   if (currency === "KRW") return "₩" + Math.round(v).toLocaleString(locale);
   return new Intl.NumberFormat(locale, { style: "currency", currency }).format(v);
 }
+
 function ymd(d) { return new Date(d).toISOString().slice(0, 10); }
 function addDays(dateStr, days) {
   const d = new Date(dateStr + "T00:00:00Z");
@@ -43,12 +68,7 @@ function calcStartByRange(endStr, range) {
   if (range === "5Y") return addDays(endStr, -2000);
   return addDays(endStr, -400);
 }
-function normalizeDateKey(d) { return d ? String(d).slice(0, 10) : null; }
-function pickFxValue(p) {
-  const v = p?.close ?? p?.rate ?? p?.value ?? p?.fx ?? p?.price ?? p?.adjClose ?? p?.adj_close;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
+
 function buildFxMap(rows) {
   const map = new Map();
   for (const x of rows || []) {
@@ -58,6 +78,7 @@ function buildFxMap(rows) {
   }
   return map;
 }
+
 function getFxSmart(dateStr, fxMap, fxDatesSorted) {
   if (fxMap.has(dateStr)) return fxMap.get(dateStr);
   const next = addDays(dateStr, +1);
@@ -83,7 +104,7 @@ async function fetchHistory(ticker, start, end) {
   return r.json();
 }
 
-// fxHistory endpoint: pair → 실패하면 pair 없이 재시도
+// pair로 먼저 시도 → 실패하면 pair 없이 재시도
 async function fetchFX(pair, start, end) {
   const try1 = `/api/fxHistory?pair=${encodeURIComponent(pair)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
   let r = await fetch(try1);
@@ -96,7 +117,7 @@ async function fetchFX(pair, start, end) {
 }
 
 function buildKeyCards(cards) {
-  const grid = document.getElementById("g_key_grid");
+  const grid = el("g_key_grid");
   grid.innerHTML = "";
   for (const c of cards || []) {
     const div = document.createElement("div");
@@ -111,7 +132,7 @@ function buildKeyCards(cards) {
 }
 
 function buildList(ulId, items) {
-  const ul = document.getElementById(ulId);
+  const ul = el(ulId);
   ul.innerHTML = "";
   for (const s of items || []) {
     const li = document.createElement("li");
@@ -121,7 +142,7 @@ function buildList(ulId, items) {
 }
 
 function buildFaq(list) {
-  const wrap = document.getElementById("g_faq_list");
+  const wrap = el("g_faq_list");
   wrap.innerHTML = "";
   for (const it of list || []) {
     const d = document.createElement("details");
@@ -135,80 +156,25 @@ function buildFaq(list) {
 }
 
 function buildOtherTickers(otherTickers, market, regionCode) {
-  const grid = document.getElementById("g_other_grid");
+  const grid = el("g_other_grid");
   grid.innerHTML = "";
   const list = (otherTickers || []).slice(0, 3);
+
   for (const t of list) {
+    const T = String(t).toUpperCase();
     const a = document.createElement("a");
-    a.href = `/${regionCode}/guide/${market}/ticker/${String(t).toLowerCase()}/`;
+    a.href = `/${regionCode}/guide/${market}/ticker/${T.toLowerCase()}/`;
     a.setAttribute("data-go", "guide");
     a.setAttribute("data-market", market);
-    a.setAttribute("data-ticker", String(t).toUpperCase());
+    a.setAttribute("data-ticker", T);
     a.className = "go-link rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50 p-5 transition";
     a.innerHTML = `
       <div class="text-xs font-black text-slate-500 uppercase">Guide</div>
-      <div class="mt-2 text-lg font-extrabold">${escapeHtml(String(t).toUpperCase())}</div>
+      <div class="mt-2 text-lg font-extrabold">${escapeHtml(T)}</div>
       <p class="mt-2 text-sm text-slate-600">Open guide</p>
     `;
     grid.appendChild(a);
   }
-}
-
-export async function renderGuide(ctx, { ticker, market = "nasdaq", accent = "#f59e0b" }) {
-  const t = String(ticker || "").toUpperCase();
-  if (!GUIDE_DATA[t]) throw new Error(`GUIDE_DATA missing: ${t}`);
-
-  const tplRes = await fetch("/assets/guide/template.html", { cache: "no-cache" });
-  if (!tplRes.ok) throw new Error("template.html not found");
-  const tpl = await tplRes.text();
-
-  const root = document.getElementById("guideRoot");
-  root.innerHTML = tpl;
-  root.style.setProperty("--accent", accent);
-
-  const lang = (ctx?.lang || ctx?.region?.lang || "ko") === "en" ? "en" : "ko";
-  const data = GUIDE_DATA[t][lang];
-
-  // HERO
-  el("g_badge").textContent = data.badge;
-  el("g_title").textContent = `${data.title} (${String(ctx?.region?.code || "").toUpperCase()})`;
-  el("g_desc").innerHTML = data.desc;
-
-  el("g_btn_backtest").textContent = data.btnBacktest;
-  el("g_btn_future").textContent = data.btnFuture;
-  el("g_btn_backtest").setAttribute("data-ticker", t);
-  el("g_btn_future").setAttribute("data-ticker", t);
-
-  // PRICE
-  el("g_price_title").textContent = data.priceTitle;
-  el("g_price_sub").textContent = data.priceSub;
-  el("g_ticker_label").textContent = t;
-  el("g_trend_label").textContent = data.trendLabel;
-
-  // KEY/GOOD/WATCH/FAQ/DISCLAIMER
-  buildKeyCards(data.keyCards);
-  el("g_good_title").textContent = data.goodTitle;
-  el("g_watch_title").textContent = data.watchTitle;
-  buildList("g_good_list", data.good);
-  buildList("g_watch_list", data.watch);
-
-  el("g_faq_title").textContent = data.faqTitle;
-  el("g_faq_sub").textContent = data.faqSub;
-  buildFaq(data.faq);
-
-  el("g_disclaimer_title").textContent = data.disclaimerTitle;
-  el("g_disclaimer_desc").textContent = data.disclaimerDesc;
-  el("g_disclaimer_data").textContent = data.disclaimerData;
-
-  el("g_other_title").textContent = data.otherTitle;
-  el("g_other_sub").textContent = data.otherSub;
-  el("g_region_label").textContent = String(ctx?.region?.code || "").toUpperCase();
-
-  const others = ["SCHD", "SPY", "QQQ", "TQQQ"].filter(x => x !== t);
-  buildOtherTickers(others, market, ctx.region.code);
-
-  // Price widget init
-  initPriceWidget(ctx, t);
 }
 
 /***********************
@@ -249,7 +215,8 @@ function updateToggleUI(ctx) {
   } else {
     btnLOCAL.className = "px-3 py-2 rounded-xl font-extrabold text-sm bg-white shadow-sm";
     btnUSD.className = "px-3 py-2 rounded-xl font-extrabold text-sm text-slate-700 hover:bg-slate-200";
-    el("priceLabel").textContent = (r === "kr") ? `현재가(${_fxPolicy.localCcy})` : `Current (${_fxPolicy.localCcy})`;
+    el("priceLabel").textContent =
+      (r === "kr") ? `현재가(${_fxPolicy.localCcy})` : `Current (${_fxPolicy.localCcy})`;
   }
 }
 
@@ -272,6 +239,7 @@ window.setDisplayCurrency = function(mode) {
 function drawChart(labels, values, prefix) {
   const ctx2d = el("etfChart").getContext("2d");
   if (_chart) _chart.destroy();
+
   _chart = new Chart(ctx2d, {
     type: "line",
     data: { labels, datasets: [{ label: "price", data: values, pointRadius: 0, borderWidth: 2, fill: false }] },
@@ -360,17 +328,21 @@ function renderFromCache(ctx) {
 async function initPriceWidget(ctx, ticker) {
   window.__GUIDE_CTX = ctx;
   _fxPolicy = getFxPolicy(ctx);
-
   _displayCurrencyMode = (_fxPolicy.showFx && _fxPolicy.localCcy !== "USD") ? "LOCAL" : "USD";
   updateToggleUI(ctx);
-
   await window.loadPrice("1Y", ticker);
 }
 
-window.loadPrice = async function(range = "1Y", tickerOverride = null) {
+// ✅ 전역 함수 (template.html 버튼 onclick과 연결)
+window.loadPrice = async function(range = "1Y", tickerOverride = "") {
   const ctx = window.__GUIDE_CTX;
   const r = (ctx?.region?.code || "kr").toLowerCase();
-  const ticker = tickerOverride || (ctx?.ticker || "");
+
+  const ticker = (tickerOverride || window.__GUIDE_TICKER || "").toUpperCase();
+  if (!ticker) {
+    el("etfStatus").textContent = "Ticker missing.";
+    return;
+  }
 
   try {
     _cachedRange = range;
@@ -385,14 +357,25 @@ window.loadPrice = async function(range = "1Y", tickerOverride = null) {
     const start = calcStartByRange(end, range);
 
     const data = await fetchHistory(ticker, start, end);
-    const prices = (data.prices || [])
-      .filter(p => p?.date && Number.isFinite(Number(p.close)))
-      .map(p => ({ date: String(p.date).slice(0,10), close: Number(p.close) }));
+
+    // ✅ prices/data 둘 다 처리 + close/adjClose/price/value 처리
+    const rawPrices = (data.prices || data.data || []);
+    const prices = (rawPrices || [])
+      .map(p => {
+        const d = normalizeDateKey(p?.date);
+        const c = pickPriceValue(p);
+        if (!d || !c) return null;
+        return { date: d, close: c };
+      })
+      .filter(Boolean);
 
     if (prices.length < 5) {
-      el("etfStatus").textContent = (r === "kr") ? "가격 데이터가 충분하지 않아요." : "Not enough price data.";
+      el("etfStatus").textContent = (r === "kr")
+        ? "가격 데이터가 충분하지 않아요. (응답 필드명 확인 필요)"
+        : "Not enough price data. (check response fields)";
       return;
     }
+
     _cachedPrices = prices;
 
     _fxOk = false;
@@ -424,5 +407,85 @@ window.loadPrice = async function(range = "1Y", tickerOverride = null) {
     }
   } catch (e) {
     el("etfStatus").textContent = "Error: " + String(e).slice(0, 180);
+    console.error(e);
   }
 };
+
+export async function renderGuide(ctx, { ticker, market = "nasdaq" }) {
+  const t = String(ticker || "").toUpperCase();
+
+  if (!GUIDE_DATA[t]) {
+    el("guideRoot").innerHTML = `<div class="rounded-3xl bg-white border border-rose-200 p-6">
+      GUIDE_DATA missing: <b>${escapeHtml(t)}</b>
+    </div>`;
+    return;
+  }
+
+  // template 로드
+  const tplRes = await fetch("/assets/guide/template.html", { cache: "no-cache" });
+  if (!tplRes.ok) {
+    el("guideRoot").innerHTML = `<div class="rounded-3xl bg-white border border-rose-200 p-6">
+      template.html not found (/assets/guide/template.html)
+    </div>`;
+    return;
+  }
+  const tpl = await tplRes.text();
+
+  const root = document.getElementById("guideRoot");
+  root.innerHTML = tpl;
+
+  // ✅ ticker 저장 (loadPrice 버튼에서 사용)
+  window.__GUIDE_TICKER = t;
+
+  // accent: ticker별로 기본값(원하면 더 세분화 가능)
+  const accentMap = { SCHD:"#f59e0b", SPY:"#0ea5e9", QQQ:"#f59e0b", TQQQ:"#ef4444" };
+  root.style.setProperty("--accent", accentMap[t] || "#f59e0b");
+
+  const lang = ((ctx?.lang || ctx?.region?.lang || "ko") === "en") ? "en" : "ko";
+  const data = GUIDE_DATA[t][lang];
+
+  // HERO
+  el("g_badge").textContent = data.badge;
+  el("g_title").textContent = `${data.title} (${String(ctx?.region?.code || "").toUpperCase()})`;
+  el("g_desc").innerHTML = data.desc;
+
+  el("g_btn_backtest").textContent = data.btnBacktest;
+  el("g_btn_future").textContent = data.btnFuture;
+
+  el("g_btn_backtest").setAttribute("data-ticker", t);
+  el("g_btn_future").setAttribute("data-ticker", t);
+
+  // PRICE
+  el("g_price_title").textContent = data.priceTitle;
+  el("g_price_sub").textContent = data.priceSub;
+  el("g_ticker_label").textContent = t;
+  el("g_trend_label").textContent = data.trendLabel;
+
+  // SECTION
+  buildKeyCards(data.keyCards);
+  el("g_good_title").textContent = data.goodTitle;
+  el("g_watch_title").textContent = data.watchTitle;
+  buildList("g_good_list", data.good);
+  buildList("g_watch_list", data.watch);
+
+  el("g_faq_title").textContent = data.faqTitle;
+  el("g_faq_sub").textContent = data.faqSub;
+  buildFaq(data.faq);
+
+  el("g_disclaimer_title").textContent = data.disclaimerTitle;
+  el("g_disclaimer_desc").textContent = data.disclaimerDesc;
+  el("g_disclaimer_data").textContent = data.disclaimerData;
+
+  el("g_other_title").textContent = data.otherTitle;
+  el("g_other_sub").textContent = data.otherSub;
+  el("g_region_label").textContent = String(ctx?.region?.code || "").toUpperCase();
+
+  const others = ["SCHD", "SPY", "QQQ", "TQQQ"].filter(x => x !== t);
+  buildOtherTickers(others, market, ctx.region.code);
+
+  // ✅ 동적 주입 후 go-link 다시 바인딩
+  bindGoLinks(ctx.region.code);
+
+  // ✅ Price init
+  await initPriceWidget(ctx, t);
+}
