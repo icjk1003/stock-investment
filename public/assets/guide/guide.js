@@ -1,6 +1,5 @@
 // assets/guide/guide.js
 import { GUIDE_DATA } from "./guide-data.js";
-import { bindGoLinks } from "/assets/app.js"; // ✅ 동적 주입 후 go-link 다시 바인딩
 
 function el(id) { return document.getElementById(id); }
 function escapeHtml(s) {
@@ -9,7 +8,7 @@ function escapeHtml(s) {
   }[m]));
 }
 
-// region별 FX 정책 (네 기존 endpoint 혼용을 감안해서 안전하게 구성)
+// region별 FX 정책
 function getFxPolicy(ctx) {
   const r = (ctx?.region?.code || "kr").toLowerCase();
   if (r === "kr") return { showFx: true, localCcy: "KRW", locale: "ko-KR", pair: "USDKRW" };
@@ -67,7 +66,6 @@ function getFxSmart(dateStr, fxMap, fxDatesSorted) {
     const prev = addDays(dateStr, -k);
     if (fxMap.has(prev)) return fxMap.get(prev);
   }
-  // binary search floor
   let lo = 0, hi = fxDatesSorted.length - 1, ans = -1;
   while (lo <= hi) {
     const mid = (lo + hi) >> 1;
@@ -85,7 +83,7 @@ async function fetchHistory(ticker, start, end) {
   return r.json();
 }
 
-// ✅ fxHistory endpoint가 pair 유/무가 섞여있어서: pair로 시도 → 실패하면 pair 없이 재시도
+// fxHistory endpoint: pair → 실패하면 pair 없이 재시도
 async function fetchFX(pair, start, end) {
   const try1 = `/api/fxHistory?pair=${encodeURIComponent(pair)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
   let r = await fetch(try1);
@@ -160,15 +158,12 @@ export async function renderGuide(ctx, { ticker, market = "nasdaq", accent = "#f
   const t = String(ticker || "").toUpperCase();
   if (!GUIDE_DATA[t]) throw new Error(`GUIDE_DATA missing: ${t}`);
 
-  // 템플릿 로드 & 삽입
   const tplRes = await fetch("/assets/guide/template.html", { cache: "no-cache" });
   if (!tplRes.ok) throw new Error("template.html not found");
   const tpl = await tplRes.text();
 
   const root = document.getElementById("guideRoot");
   root.innerHTML = tpl;
-
-  // accent
   root.style.setProperty("--accent", accent);
 
   const lang = (ctx?.lang || ctx?.region?.lang || "ko") === "en" ? "en" : "ko";
@@ -177,14 +172,14 @@ export async function renderGuide(ctx, { ticker, market = "nasdaq", accent = "#f
   // HERO
   el("g_badge").textContent = data.badge;
   el("g_title").textContent = `${data.title} (${String(ctx?.region?.code || "").toUpperCase()})`;
-  el("g_desc").innerHTML = data.desc; // 데이터에서 <b> 허용한 경우가 있어 innerHTML
+  el("g_desc").innerHTML = data.desc;
+
   el("g_btn_backtest").textContent = data.btnBacktest;
   el("g_btn_future").textContent = data.btnFuture;
-
   el("g_btn_backtest").setAttribute("data-ticker", t);
   el("g_btn_future").setAttribute("data-ticker", t);
 
-  // PRICE labels
+  // PRICE
   el("g_price_title").textContent = data.priceTitle;
   el("g_price_sub").textContent = data.priceSub;
   el("g_ticker_label").textContent = t;
@@ -209,14 +204,10 @@ export async function renderGuide(ctx, { ticker, market = "nasdaq", accent = "#f
   el("g_other_sub").textContent = data.otherSub;
   el("g_region_label").textContent = String(ctx?.region?.code || "").toUpperCase();
 
-  // other tickers (자기 자신 제외 추천)
   const others = ["SCHD", "SPY", "QQQ", "TQQQ"].filter(x => x !== t);
   buildOtherTickers(others, market, ctx.region.code);
 
-  // ✅ 동적 주입 후 go-link 재바인딩(중요)
-  bindGoLinks(ctx.region.code);
-
-  // ✅ Price widget init (공용)
+  // Price widget init
   initPriceWidget(ctx, t);
 }
 
@@ -240,7 +231,6 @@ function updateToggleUI(ctx) {
   const btnUSD = el("btnUSD");
   const btnLOCAL = el("btnLOCAL");
 
-  // return label
   el("retLabel").textContent = (r === "kr") ? "기간 수익률" : "Period Return";
 
   if (!isFx) {
@@ -307,7 +297,6 @@ function fmtFxLine(fx, dateStr) {
 
 function renderFromCache(ctx) {
   const r = (ctx?.region?.code || "kr").toLowerCase();
-
   const prices = _cachedPrices;
   if (prices.length < 5) return;
 
@@ -320,7 +309,6 @@ function renderFromCache(ctx) {
   const firstUSD = Number(first.close);
   const lastUSD = Number(last.close);
 
-  // downsample
   const maxPoints = 260;
   let use = prices;
   if (prices.length > maxPoints) {
@@ -363,6 +351,7 @@ function renderFromCache(ctx) {
   }
   const prefix = (_fxPolicy.localCcy === "KRW") ? "₩" : "";
   drawChart(labels, values, prefix);
+
   el("etfStatus").textContent = (r === "kr")
     ? `완료 (${_fxPolicy.localCcy}, ${_fxPolicy.pair})`
     : `Done (${_fxPolicy.localCcy}, ${_fxPolicy.pair})`;
@@ -372,17 +361,16 @@ async function initPriceWidget(ctx, ticker) {
   window.__GUIDE_CTX = ctx;
   _fxPolicy = getFxPolicy(ctx);
 
-  // region 기본 표시 통화
   _displayCurrencyMode = (_fxPolicy.showFx && _fxPolicy.localCcy !== "USD") ? "LOCAL" : "USD";
   updateToggleUI(ctx);
 
-  // first load
-  await window.loadPrice("1Y");
+  await window.loadPrice("1Y", ticker);
 }
 
-window.loadPrice = async function(range = "1Y") {
+window.loadPrice = async function(range = "1Y", tickerOverride = null) {
   const ctx = window.__GUIDE_CTX;
   const r = (ctx?.region?.code || "kr").toLowerCase();
+  const ticker = tickerOverride || (ctx?.ticker || "");
 
   try {
     _cachedRange = range;
@@ -407,7 +395,6 @@ window.loadPrice = async function(range = "1Y") {
     }
     _cachedPrices = prices;
 
-    // FX
     _fxOk = false;
     _fxMap = new Map();
     _fxDates = [];
@@ -425,7 +412,6 @@ window.loadPrice = async function(range = "1Y") {
       }
     }
 
-    // FX 없으면 LOCAL → USD로 자동 다운그레이드
     if (_displayCurrencyMode === "LOCAL" && (!_fxOk || !_fxPolicy.showFx)) _displayCurrencyMode = "USD";
 
     updateToggleUI(ctx);
@@ -433,7 +419,7 @@ window.loadPrice = async function(range = "1Y") {
 
     if (_fxPolicy.showFx && _fxPolicy.localCcy !== "USD" && !_fxOk) {
       el("etfStatus").textContent = (r === "kr")
-        ? "완료 (USD). KRW/LOCAL 변환은 fxHistory가 필요합니다."
+        ? "완료 (USD). LOCAL 변환은 fxHistory가 필요합니다."
         : "Done (USD). LOCAL conversion needs fxHistory.";
     }
   } catch (e) {

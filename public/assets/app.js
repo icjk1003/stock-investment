@@ -12,6 +12,9 @@ const VALID_REGIONS = new Set(["kr", "us", "ca"]);
 const DEFAULT_REGION = "kr";
 const STORAGE_KEY = "mvp_region";
 
+let __regionDelegatedBound = false;
+let __goDelegatedBound = false;
+
 function normalizeRegion(v) {
   if (!v) return null;
   const r = String(v).trim().toLowerCase();
@@ -32,15 +35,15 @@ function setStoredRegion(region) {
   } catch (e) {}
 }
 
-function guessRegionFromPath() {
-  const parts = location.pathname.split("/").filter(Boolean);
+function guessRegionFromPath(pathname = location.pathname) {
+  const parts = String(pathname).split("/").filter(Boolean);
   const p0 = (parts[0] || "").toLowerCase();
   return normalizeRegion(p0);
 }
 
-function guessTickerFromPath() {
+function guessTickerFromPath(pathname = location.pathname) {
   // 예: /kr/guide/nasdaq/ticker/schd/ -> SCHD
-  const parts = location.pathname.split("/").filter(Boolean);
+  const parts = String(pathname).split("/").filter(Boolean);
   const idx = parts.findIndex((p) => String(p).toLowerCase() === "ticker");
   if (idx >= 0 && parts[idx + 1]) return String(parts[idx + 1]).toUpperCase();
   return "";
@@ -158,30 +161,29 @@ export function applyActiveRegion(regionCode) {
  * /kr/... -> /us/... (prefix swap)
  * region prefix가 없으면 앞에 삽입
  */
-function swapRegionInPath(targetRegion) {
-  const parts = location.pathname.split("/").filter(Boolean);
+function swapRegionInPath(targetRegion, pathname = location.pathname) {
+  const parts = String(pathname).split("/").filter(Boolean);
   const p0 = (parts[0] || "").toLowerCase();
 
   if (normalizeRegion(p0)) parts[0] = targetRegion;
   else parts.unshift(targetRegion);
 
-  return "/" + parts.join("/") + (location.pathname.endsWith("/") ? "/" : "");
+  return "/" + parts.join("/") + (String(pathname).endsWith("/") ? "/" : "");
 }
 
 /**
  * ✅ header 로고 링크를 "현재 region 홈"으로 자동 교체
  * - header.html은 href="/"로 고정해도 됨
  * - 주입 후에 app.js가 /kr/, /us/, /ca/로 교체
+ * - scope를 header slot로 제한(다른 "/" 링크 오염 방지)
  */
 function patchHeaderLogoHref(regionCode) {
   const r = normalizeRegion(regionCode) || DEFAULT_REGION;
+  const headerSlot = document.querySelector('[data-partial="header"]');
+  if (!headerSlot) return;
 
-  // header.html: <a href="/" class="flex items-center gap-2"> ... </a>
-  // 가장 안전하게: header slot 내부의 첫번째 링크 중 href="/"인 것만 교체
-  document.querySelectorAll('a[href="/"]').forEach((a) => {
+  headerSlot.querySelectorAll('a[href="/"]').forEach((a) => {
     const cls = a.getAttribute("class") || "";
-    // 로고 링크(상단 왼쪽)만 타겟팅: class에 "flex items-center"가 들어가는 케이스가 많음
-    // (혹시 다른 "/" 링크가 있어도 최소한의 오작동을 줄이기 위한 조건)
     if (cls.includes("flex") && cls.includes("items-center")) {
       a.setAttribute("href", `/${r}/`);
     }
@@ -193,39 +195,50 @@ function patchHeaderLogoHref(regionCode) {
  * - localStorage(mvp_region)에 저장
  * - 현재 경로 유지 + region prefix만 교체
  * - query는 유지하되 region/r 파라미터는 제거
+ *
+ * ⚠️ 기존 방식(요소별 addEventListener)은 동적 주입/렌더 타이밍에 놓칠 수 있어
+ * ✅ document 이벤트 위임 방식으로 교체
  */
-export function bindRegionNav(ctx) {
-  const btns = document.querySelectorAll(".region-btn[data-region]");
-  btns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const target = normalizeRegion(btn.getAttribute("data-region"));
-      if (!target) return;
+function bindRegionNavDelegated() {
+  if (__regionDelegatedBound) return;
+  __regionDelegatedBound = true;
 
-      // 저장(루트 리다이렉트와 일치)
-      setStoredRegion(target);
+  document.addEventListener("click", (e) => {
+    const a = e.target?.closest?.(".region-btn[data-region]");
+    if (!a) return;
 
-      const u = new URL(location.href);
-      const sp = new URLSearchParams(u.search);
+    const target = normalizeRegion(a.getAttribute("data-region"));
+    if (!target) return;
 
-      // region 관련 query 제거 (path가 기준)
-      sp.delete("region");
-      sp.delete("r");
+    e.preventDefault();
 
-      // ticker는 tools에서 필요할 수 있어 유지
-      const ticker =
-        (ctx?.ticker || "").toUpperCase() ||
-        (sp.get("ticker") || "").toUpperCase() ||
-        guessTickerFromPath() ||
-        "";
-      if (ticker) sp.set("ticker", ticker);
+    // ctx는 boot에서 window에 저장해 둠
+    const ctx = window.__MVP_CTX || null;
 
-      const nextPath = swapRegionInPath(target);
-      const qs = sp.toString();
-      const nextUrl = qs ? `${nextPath}?${qs}` : nextPath;
+    setStoredRegion(target);
 
-      e.preventDefault();
-      location.href = nextUrl;
-    });
+    const u = new URL(location.href);
+    const sp = new URLSearchParams(u.search);
+
+    // region 관련 query 제거 (path가 기준)
+    sp.delete("region");
+    sp.delete("r");
+
+    // ticker 유지(도구 페이지 등에서 필요)
+    const ticker =
+      (ctx?.ticker || "").toUpperCase() ||
+      (sp.get("ticker") || "").toUpperCase() ||
+      guessTickerFromPath() ||
+      "";
+
+    if (ticker) sp.set("ticker", ticker);
+
+    // ✅ "현재 페이지 경로 유지 + region prefix만 교체"
+    const nextPath = swapRegionInPath(target, location.pathname);
+    const qs = sp.toString();
+    const nextUrl = qs ? `${nextPath}?${qs}` : nextPath;
+
+    location.href = nextUrl;
   });
 }
 
@@ -248,41 +261,56 @@ function goUrl(kind, region, ticker, market = "nasdaq") {
   return `/${r}/`;
 }
 
-export function bindGoLinks(region) {
-  const r = normalizeRegion(region) || DEFAULT_REGION;
+/**
+ * ✅ go-link도 delegation으로(동적 주입 후 재바인딩 불필요)
+ */
+function bindGoLinksDelegated() {
+  if (__goDelegatedBound) return;
+  __goDelegatedBound = true;
 
-  document.querySelectorAll("[data-go][data-ticker]").forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const kind = String(a.getAttribute("data-go") || "").toLowerCase();
-      const ticker = a.getAttribute("data-ticker") || "";
-      const market = a.getAttribute("data-market") || "nasdaq";
+  document.addEventListener("click", (e) => {
+    const a = e.target?.closest?.("[data-go][data-ticker]");
+    if (!a) return;
 
-      const url = goUrl(kind, r, ticker, market);
-      e.preventDefault();
-      location.href = url;
-    });
+    const kind = String(a.getAttribute("data-go") || "").toLowerCase();
+    const ticker = a.getAttribute("data-ticker") || "";
+    const market = a.getAttribute("data-market") || "nasdaq";
+
+    const ctx = window.__MVP_CTX || null;
+    const region = ctx?.region?.code || guessRegionFromPath() || DEFAULT_REGION;
+
+    const url = goUrl(kind, region, ticker, market);
+    e.preventDefault();
+    location.href = url;
   });
 }
 
 /**
+ * (호환 유지용) 예전 코드가 bindGoLinks를 호출해도 문제 없게 no-op 수준으로 둠
+ * - 이제는 delegated가 처리하므로 굳이 매번 붙일 필요 없음
+ */
+export function bindGoLinks(_region) {
+  // delegated가 이미 처리
+  bindGoLinksDelegated();
+}
+
+/**
  * ✅ 페이지 공통 부트스트랩
- * - partial 주입 -> ctx -> i18n -> header logo href 패치 -> region active -> nav 바인딩 -> go링크 바인딩
+ * - partial 주입 -> ctx -> i18n -> header logo href 패치 -> region active -> (delegated) nav/go 바인딩
  */
 export async function boot() {
   await injectPartials();
 
   const ctx = getContext();
+  window.__MVP_CTX = ctx; // ✅ 어디서든 현재 ctx 참조 가능
 
-  // 주입된 header에 대해 i18n / 링크 패치 / region 처리
   applyI18n(ctx.dict);
-
-  // ✅ 로고 href를 현재 region 홈으로 자동 교체
   patchHeaderLogoHref(ctx.region.code);
-
   applyActiveRegion(ctx.region.code);
 
-  bindRegionNav(ctx);
-  bindGoLinks(ctx.region.code);
+  // ✅ delegation 바인딩 (한 번만)
+  bindRegionNavDelegated();
+  bindGoLinksDelegated();
 
   return ctx;
 }

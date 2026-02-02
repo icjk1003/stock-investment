@@ -4,13 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>SPY Guide (US) | S&P 500 · Backtest · Future Simulator</title>
-  <meta name="description" content="SPY (S&P 500) guide for US. A common benchmark ETF for long-term investing, backtests and future simulations." />
-
-  <link rel="canonical" href="https://myvaluepick.com/us/guide/nasdaq/ticker/spy/" />
-  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/guide/nasdaq/ticker/spy/" />
-  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/guide/nasdaq/ticker/spy/" />
-  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/us/guide/nasdaq/ticker/spy/" />
+  <!-- ✅ SEO는 JS로도 바꿀 수 있지만, 최소한의 기본값만 둠 -->
+  <title>MyValuePick Guide</title>
+  <meta name="description" content="ETF guide page." />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -30,12 +26,27 @@
   </div>
 
   <script type="module">
-    import { boot, bindGoLinks } from "/assets/app.js";
+    import { boot } from "/assets/app.js";
     import { renderGuide } from "/assets/guide/guide.js";
 
     const ctx = await boot();
-    await renderGuide(ctx, { ticker: "SPY", market: "nasdaq", accent: "#10b981" });
-    bindGoLinks(ctx.region.code);
+
+    // ✅ ticker는 경로(/.../ticker/schd/)에서 자동으로 들어옴 (app.js guessTickerFromPath)
+    const ticker = (ctx.ticker || "SCHD").toUpperCase();
+    const market = "nasdaq";
+
+    // ✅ region별 accent 예시 (원하면 GUIDE_DATA에서 ticker별로도 줄 수 있음)
+    const accentByRegion = {
+      kr: "#f59e0b",
+      us: "#f59e0b",
+      ca: "#f59e0b",
+    };
+    const accent = accentByRegion[(ctx.region.code || "kr").toLowerCase()] || "#f59e0b";
+
+    await renderGuide(ctx, { ticker, market, accent });
+
+    // ✅ (선택) title/description을 데이터로 맞추고 싶으면 GUIDE_DATA 기반으로 여기서 바꾸면 됨.
+    // document.title = `${ticker} Guide (${ctx.region.code.toUpperCase()}) | MyValuePick`;
   </script>
 </body>
 </html>
