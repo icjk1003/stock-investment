@@ -1,43 +1,81 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MyValuePick</title>
-  <meta name="description" content="Select region: KR / US / CA" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redirecting…</title>
+  <meta name="robots" content="noindex" />
   <style>
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0b1220; color:#e5e7eb; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 48px 16px; }
-    .card { background:#111a2e; border:1px solid #24314d; border-radius:16px; padding:24px; }
-    h1 { margin:0 0 10px; font-size: 28px; }
-    p { margin:0 0 18px; opacity: .85; }
-    .btns { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    a.btn {
-      display:block; text-align:center; padding:14px 12px;
-      border-radius:12px; text-decoration:none;
-      background:#1a2642; border:1px solid #2a3a5e; color:#e5e7eb;
-      font-weight:600;
-    }
-    a.btn:hover { background:#223356; }
-    .note { margin-top: 12px; font-size: 13px; opacity:.75; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 24px; }
+    .muted { color: #6b7280; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>MyValuePick</h1>
-      <p>국가(Region)를 선택하세요.</p>
+  <h1>Redirecting…</h1>
+  <p class="muted">If you are not redirected automatically, <a id="manualLink" href="/kr/">click here</a>.</p>
 
-      <div class="btns">
-        <a class="btn" href="/kr">🇰🇷 KR</a>
-        <a class="btn" href="/us">🇺🇸 US</a>
-        <a class="btn" href="/ca">🇨🇦 CA</a>
-      </div>
+  <script>
+    (function () {
+      const SUPPORTED = ["kr", "us", "ca"];
+      const DEFAULT_REGION = "kr";
+      const STORAGE_KEY = "mvp_region";
 
-      <div class="note">
-        버튼을 누르면 해당 국가 폴더의 index.html로 이동합니다. (예: /kr/ → /kr/index.html)
-      </div>
-    </div>
-  </div>
+      function normalizeRegion(v) {
+        if (!v) return null;
+        const r = String(v).trim().toLowerCase();
+        return SUPPORTED.includes(r) ? r : null;
+      }
+
+      function guessRegionByLanguage() {
+        const lang = (navigator.language || "").toLowerCase();
+        const langs = (navigator.languages || []).map(x => String(x).toLowerCase());
+        if (lang.startsWith("ko") || langs.some(l => l.startsWith("ko"))) return "kr";
+        if (lang.startsWith("en") || langs.some(l => l.startsWith("en"))) return "us";
+        return null;
+      }
+
+      function safePath(p) {
+        if (!p) return "/";
+        let s = String(p).trim();
+        try { s = decodeURIComponent(s); } catch (e) {}
+        if (!s.startsWith("/")) s = "/" + s;
+        if (s.startsWith("//")) s = "/";
+
+        // 만약 path에 /kr/... 같은 prefix가 있으면 제거
+        const m = s.match(/^\/(kr|us|ca)(\/|$)/i);
+        if (m) {
+          s = s.replace(/^\/(kr|us|ca)/i, "");
+          if (!s.startsWith("/")) s = "/" + s;
+        }
+        return s;
+      }
+
+      const url = new URL(location.href);
+
+      // 1) query (?region= or ?r=)
+      const qRegion = normalizeRegion(url.searchParams.get("region")) || normalizeRegion(url.searchParams.get("r"));
+
+      // 2) localStorage
+      let storedRegion = null;
+      try { storedRegion = normalizeRegion(localStorage.getItem(STORAGE_KEY)); } catch (e) {}
+
+      // 3) language
+      const langRegion = guessRegionByLanguage();
+
+      // final
+      const region = qRegion || storedRegion || langRegion || DEFAULT_REGION;
+
+      // remember
+      try { localStorage.setItem(STORAGE_KEY, region); } catch (e) {}
+
+      // optional deep-link: ?path=
+      const targetPath = safePath(url.searchParams.get("path"));
+      const targetUrl = `/${region}${targetPath}`;
+
+      document.getElementById("manualLink").href = targetUrl;
+      window.location.replace(targetUrl);
+    })();
+  </script>
 </body>
 </html>

@@ -7,7 +7,9 @@
   <title>MyValuePick | ETF 백테스트 & 배당/자산 시뮬레이터</title>
   <meta name="description" content="SCHD, SPY, QQQ, TQQQ 등 ETF 백테스트(과거 누적매수)와 미래 자산 시뮬레이션을 표/그래프로 확인하세요. 배당(세후)·환율·세금 정책 반영." />
 
-  <link rel="canonical" href="/" />
+  <!-- ✅ kr 홈은 /kr/ -->
+  <link rel="canonical" href="/kr/" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
@@ -31,29 +33,8 @@
 
 <body class="p-4 md:p-8">
   <div class="max-w-6xl mx-auto">
-    <!-- Top Nav -->
-    <div class="flex items-center justify-between mb-6">
-      <a href="/" class="flex items-center gap-2">
-        <div class="h-9 w-9 rounded-2xl bg-blue-600"></div>
-        <div>
-          <div class="font-extrabold text-slate-900 leading-tight">MyValuePick</div>
-          <div class="text-[11px] text-slate-500 -mt-0.5">ETF 백테스트 · 미래 시뮬</div>
-        </div>
-      </a>
-
-      <!-- ✅ Region only (auto-active by JS) -->
-      <div class="flex items-center">
-        <div class="flex items-center gap-1 bg-white border rounded-xl px-2 py-1 shadow-sm">
-          <span class="text-[11px] text-slate-500 font-semibold">Region</span>
-          <a href="/kr/" data-region="kr"
-            class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">KR</a>
-          <a href="/us/" data-region="us"
-            class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">US</a>
-          <a href="/ca/" data-region="ca"
-            class="region-btn text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100">CA</a>
-        </div>
-      </div>
-    </div>
+    <!-- ✅ Header partial slot -->
+    <div data-partial="header"></div>
 
     <!-- Hero -->
     <section class="bg-white border border-gray-100 rounded-3xl p-8 md:p-10 shadow-sm">
@@ -70,12 +51,11 @@
           </p>
 
           <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <!-- ✅ region은 JS가 자동 주입 -->
-            <a href="/backtest/" data-go="backtest" data-ticker="SCHD"
+            <a href="/kr/tools/backtest/?ticker=SCHD" data-go="backtest" data-ticker="SCHD"
                class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
               ✅ 바로 백테스트 시작
             </a>
-            <a href="/future/" data-go="future" data-ticker="SCHD"
+            <a href="/kr/tools/future/?ticker=SCHD" data-go="future" data-ticker="SCHD"
                class="inline-flex justify-center items-center px-5 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition">
               ✅ 미래 시뮬 시작
             </a>
@@ -142,15 +122,14 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <!-- ✅ 가이드는 region + ticker로 JS가 처리 -->
-            <a href="/kr/schd/" data-go="guide" data-ticker="SCHD"
+            <a href="/kr/guide/nasdaq/ticker/schd/" data-go="guide" data-market="nasdaq" data-ticker="SCHD"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/" data-go="backtest" data-ticker="SCHD"
+              <a href="/kr/tools/backtest/?ticker=SCHD" data-go="backtest" data-ticker="SCHD"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/future/" data-go="future" data-ticker="SCHD"
+              <a href="/kr/tools/future/?ticker=SCHD" data-go="future" data-ticker="SCHD"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
@@ -171,14 +150,14 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/spy/" data-go="guide" data-ticker="SPY"
+            <a href="/kr/guide/nasdaq/ticker/spy/" data-go="guide" data-market="nasdaq" data-ticker="SPY"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/" data-go="backtest" data-ticker="SPY"
+              <a href="/kr/tools/backtest/?ticker=SPY" data-go="backtest" data-ticker="SPY"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/future/" data-go="future" data-ticker="SPY"
+              <a href="/kr/tools/future/?ticker=SPY" data-go="future" data-ticker="SPY"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
@@ -199,14 +178,14 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/qqq/" data-go="guide" data-ticker="QQQ"
+            <a href="/kr/guide/nasdaq/ticker/qqq/" data-go="guide" data-market="nasdaq" data-ticker="QQQ"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/" data-go="backtest" data-ticker="QQQ"
+              <a href="/kr/tools/backtest/?ticker=QQQ" data-go="backtest" data-ticker="QQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/future/" data-go="future" data-ticker="QQQ"
+              <a href="/kr/tools/future/?ticker=QQQ" data-go="future" data-ticker="QQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
@@ -227,14 +206,14 @@
           </p>
 
           <div class="mt-auto pt-4">
-            <a href="/kr/tqqq/" data-go="guide" data-ticker="TQQQ"
+            <a href="/kr/guide/nasdaq/ticker/tqqq/" data-go="guide" data-market="nasdaq" data-ticker="TQQQ"
                class="go-link block text-center px-4 py-2.5 rounded-xl bg-slate-100 font-extrabold text-slate-700 hover:bg-slate-200 transition">
               가이드 보기
             </a>
             <div class="mt-2 grid grid-cols-2 gap-2">
-              <a href="/backtest/" data-go="backtest" data-ticker="TQQQ"
+              <a href="/kr/tools/backtest/?ticker=TQQQ" data-go="backtest" data-ticker="TQQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-700 transition">백테스트</a>
-              <a href="/future/" data-go="future" data-ticker="TQQQ"
+              <a href="/kr/tools/future/?ticker=TQQQ" data-go="future" data-ticker="TQQQ"
                  class="go-link text-center px-4 py-2 rounded-xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">미래 시뮬</a>
             </div>
           </div>
@@ -278,12 +257,14 @@
     </footer>
   </div>
 
-  <script>
-    // Footer year
+  <script type="module">
+    import { boot } from "/assets/app.js";
+
+    // footer year
     const yyEl = document.getElementById("yy");
     if (yyEl) yyEl.innerText = new Date().getFullYear();
 
-    // Simple ticker search filter
+    // simple ticker search filter
     const input = document.getElementById("tickerSearch");
     const cards = Array.from(document.querySelectorAll(".ticker-card"));
     if (input) {
@@ -296,98 +277,8 @@
       });
     }
 
-    // ---- Region / routing (single source of truth) ----
-    const VALID_REGIONS = new Set(["kr", "us", "ca"]);
-
-    function detectRegion() {
-      const path = (location.pathname || "/").toLowerCase();
-      const sp = new URLSearchParams(location.search);
-      const qRegion = (sp.get("region") || "").toLowerCase();
-      if (VALID_REGIONS.has(qRegion)) return qRegion;
-
-      if (path === "/kr" || path.startsWith("/kr/")) return "kr";
-      if (path === "/us" || path.startsWith("/us/")) return "us";
-      if (path === "/ca" || path.startsWith("/ca/")) return "ca";
-      return "kr";
-    }
-
-    function applyActiveRegion(region) {
-      document.querySelectorAll(".region-btn[data-region]").forEach(btn => {
-        const r = (btn.getAttribute("data-region") || "").toLowerCase();
-        if (r === region) {
-          btn.classList.add("bg-slate-900", "text-white");
-          btn.classList.remove("hover:bg-slate-100");
-        } else {
-          btn.classList.remove("bg-slate-900", "text-white");
-          btn.classList.add("hover:bg-slate-100");
-        }
-      });
-    }
-
-    // /kr/... -> /us/... (prefix swap)
-    function swapRegionPrefix(pathname, targetRegion) {
-      const path = (pathname || "/").toLowerCase();
-      const m = path.match(/^\/(kr|us|ca)(\/.*)?$/);
-      if (m) return `/${targetRegion}${m[2] || "/"}`;
-      return `/${targetRegion}/`;
-    }
-
-    // ✅ Region switch:
-    // - calculator pages keep their base path (/backtest/, /future/) but swap query region
-    // - guide pages swap prefix (/kr/schd/ -> /us/schd/)
-    function buildRegionSwitchUrl(targetRegion) {
-      const path = (location.pathname || "/").toLowerCase();
-      const sp = new URLSearchParams(location.search);
-      sp.set("region", targetRegion);
-
-      let nextPath = "/";
-      if (path.startsWith("/backtest/")) nextPath = "/backtest/";
-      else if (path.startsWith("/future/")) nextPath = "/future/";
-      else nextPath = swapRegionPrefix(location.pathname, targetRegion);
-
-      const qs = sp.toString();
-      return qs ? `${nextPath}?${qs}` : nextPath;
-    }
-
-    function bindRegionNav() {
-      document.querySelectorAll(".region-btn[data-region]").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const targetRegion = (btn.getAttribute("data-region") || "").toLowerCase();
-          if (!VALID_REGIONS.has(targetRegion)) return;
-          e.preventDefault();
-          location.href = buildRegionSwitchUrl(targetRegion);
-        });
-      });
-    }
-
-    // ✅ Build URLs for buttons that have data-go & data-ticker
-    // - guide: /{region}/{ticker}/
-    // - backtest/future: /backtest/?region={region}&ticker={ticker}
-    function goUrl(kind, region, ticker) {
-      const t = (ticker || "").trim().toUpperCase();
-      if (kind === "guide") return `/${region}/${t.toLowerCase()}/`;
-      if (kind === "backtest") return `/backtest/?region=${encodeURIComponent(region)}&ticker=${encodeURIComponent(t)}`;
-      if (kind === "future") return `/future/?region=${encodeURIComponent(region)}&ticker=${encodeURIComponent(t)}`;
-      return "/";
-    }
-
-    function bindGoLinks(region) {
-      document.querySelectorAll("[data-go][data-ticker]").forEach(a => {
-        a.addEventListener("click", (e) => {
-          const kind = (a.getAttribute("data-go") || "").toLowerCase();
-          const ticker = a.getAttribute("data-ticker") || "";
-          const url = goUrl(kind, region, ticker);
-          e.preventDefault();
-          location.href = url;
-        });
-      });
-    }
-
-    // ---- init ----
-    const region = detectRegion();
-    applyActiveRegion(region);
-    bindRegionNav();
-    bindGoLinks(region);
+    // init (partials 포함 전체 부트)
+    await boot();
   </script>
 </body>
 </html>
