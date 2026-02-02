@@ -1,33 +1,41 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>SPY Guide (US) | S&P 500 · Backtest · Future Simulator</title>
+  <meta name="description" content="SPY (S&P 500) guide for US. A common benchmark ETF for long-term investing, backtests and future simulations." />
+
+  <link rel="canonical" href="https://myvaluepick.com/us/guide/nasdaq/ticker/spy/" />
+  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/guide/nasdaq/ticker/spy/" />
+  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/guide/nasdaq/ticker/spy/" />
+  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/us/guide/nasdaq/ticker/spy/" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
-    body { font-family: 'Pretendard', sans-serif; }
+    body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
   </style>
 </head>
 
-<body class="p-4 md:p-8 bg-slate-50 text-slate-900">
+<body class="p-4 md:p-8">
   <div class="max-w-6xl mx-auto">
     <div data-partial="header"></div>
 
-    <main id="guide-root"></main>
+    <div id="guideRoot"></div>
 
     <div data-partial="footer"></div>
   </div>
 
   <script type="module">
-    import { boot, parseParams } from "/assets/app.js";
-    await boot();
+    import { boot, bindGoLinks } from "/assets/app.js";
+    import { renderGuide } from "/assets/guide/guide.js";
 
-    const { region, ticker } = parseParams();
-
-    const mod = await import("/assets/guides/guide-render.js");
-    await mod.renderGuide({ region, ticker, market: "nasdaq", rootId: "guide-root" });
+    const ctx = await boot();
+    await renderGuide(ctx, { ticker: "SPY", market: "nasdaq", accent: "#10b981" });
+    bindGoLinks(ctx.region.code);
   </script>
 </body>
 </html>

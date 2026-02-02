@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SCHD Guide (US) | Backtest · Future Simulator</title>
-  <meta name="description" content="SCHD guide for US. Backtest and future simulations with dividends and total return in mind." />
 
-  <link rel="canonical" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
-  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
-  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/guide/nasdaq/ticker/schd/" />
-  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
+  <title>QQQ Guide (US) | NASDAQ-100 · Backtest · Future Simulator</title>
+  <meta name="description" content="QQQ (NASDAQ-100) guide for US. Backtests and future simulations focusing on total return (price + dividends)." />
+
+  <link rel="canonical" href="https://myvaluepick.com/us/guide/nasdaq/ticker/qqq/" />
+  <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/guide/nasdaq/ticker/qqq/" />
+  <link rel="alternate" hreflang="ko" href="https://myvaluepick.com/kr/guide/nasdaq/ticker/qqq/" />
+  <link rel="alternate" hreflang="x-default" href="https://myvaluepick.com/us/guide/nasdaq/ticker/qqq/" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,7 +24,6 @@
   <div class="max-w-6xl mx-auto">
     <div data-partial="header"></div>
 
-    <!-- ✅ 공용 템플릿이 꽂힐 자리 -->
     <div id="guideRoot"></div>
 
     <div data-partial="footer"></div>
@@ -34,11 +34,7 @@
     import { renderGuide } from "/assets/guide/guide.js";
 
     const ctx = await boot();
-
-    // ✅ 여기만 바꾸면 다른 티커/국가도 동일 템플릿 사용
     await renderGuide(ctx, { ticker: "QQQ", market: "nasdaq", accent: "#f59e0b" });
-
-    // ✅ guideRoot는 boot 이후에 주입되므로 한번 더
     bindGoLinks(ctx.region.code);
   </script>
 </body>

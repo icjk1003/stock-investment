@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SCHD Guide (US) | Backtest · Future Simulator</title>
-  <meta name="description" content="SCHD guide for US. Backtest and future simulations with dividends and total return in mind." />
+
+  <title>SCHD Guide (US) | Dividend Growth ETF · Backtest · Future Simulator</title>
+  <meta name="description" content="SCHD (dividend growth ETF) guide for US. Run backtests and future simulations with total return in mind." />
 
   <link rel="canonical" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
   <link rel="alternate" hreflang="en" href="https://myvaluepick.com/us/guide/nasdaq/ticker/schd/" />
@@ -23,7 +24,6 @@
   <div class="max-w-6xl mx-auto">
     <div data-partial="header"></div>
 
-    <!-- ✅ 공용 템플릿이 꽂힐 자리 -->
     <div id="guideRoot"></div>
 
     <div data-partial="footer"></div>
@@ -34,11 +34,7 @@
     import { renderGuide } from "/assets/guide/guide.js";
 
     const ctx = await boot();
-
-    // ✅ 여기만 바꾸면 다른 티커/국가도 동일 템플릿 사용
     await renderGuide(ctx, { ticker: "SCHD", market: "nasdaq", accent: "#f59e0b" });
-
-    // ✅ guideRoot는 boot 이후에 주입되므로 한번 더
     bindGoLinks(ctx.region.code);
   </script>
 </body>
