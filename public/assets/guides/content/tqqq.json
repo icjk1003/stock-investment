@@ -1,0 +1,64 @@
+{
+  "ticker": "TQQQ",
+  "theme": { "color": "amber" },
+
+  "seoTitle": {
+    "ko": "TQQQ 가이드 | 3배 레버리지 백테스트 · 미래 시뮬레이터",
+    "en": "TQQQ Guide | 3x Leveraged Backtest · Future Simulator"
+  },
+  "seoDesc": {
+    "ko": "TQQQ(3배 레버리지) 가이드. 변동성과 리스크가 매우 크므로 기대수익·드로우다운을 함께 확인하세요.",
+    "en": "TQQQ guide. Very high volatility—check expectations and drawdowns carefully."
+  },
+
+  "heroBadge": { "ko": "레버리지 (3x 나스닥100)", "en": "3x Leverage (NASDAQ-100)" },
+  "heroTitle": { "ko": "TQQQ 가이드", "en": "TQQQ Guide" },
+  "heroDesc": {
+    "ko": "TQQQ는 변동성이 매우 큰 레버리지 ETF입니다.\n장기 결과가 크게 흔들릴 수 있으니 ‘가정/리스크’를 먼저 정리하고 보세요.",
+    "en": "TQQQ is a high-volatility leveraged ETF.\nLong-run outcomes can vary widely—define assumptions and risk tolerance first."
+  },
+
+  "summaryCards": [
+    {
+      "kicker": { "ko": "핵심", "en": "Core" },
+      "head": { "ko": "3배 레버리지", "en": "3x leveraged" },
+      "desc": { "ko": "일간 수익률 기반 레버리지 구조", "en": "Daily leveraged exposure" }
+    },
+    {
+      "kicker": { "ko": "성격", "en": "Style" },
+      "head": { "ko": "변동성 극대화", "en": "Volatility amplified" },
+      "desc": { "ko": "상승/하락이 모두 커짐", "en": "Both gains and losses become larger" }
+    },
+    {
+      "kicker": { "ko": "리스크", "en": "Risk" },
+      "head": { "ko": "드로우다운", "en": "Drawdowns" },
+      "desc": { "ko": "하락장 체감이 매우 큼", "en": "Drawdowns can be severe" }
+    },
+    {
+      "kicker": { "ko": "포인트", "en": "Point" },
+      "head": { "ko": "기간/전략", "en": "Horizon & strategy" },
+      "desc": { "ko": "짧은 기간엔 특히 위험", "en": "Short horizons are especially risky" }
+    }
+  ],
+
+  "goodFor": {
+    "ko": ["고위험 감수 가능", "명확한 원칙/리밸런싱이 있는 투자자", "변동성까지 포함해 시나리오 분석을 하는 경우"],
+    "en": ["Risk-tolerant investors", "Rule-based strategy / rebalancing", "Scenario-driven analysis (not just return)"]
+  },
+  "watchOuts": {
+    "ko": ["하락장에서 회복까지 오래 걸릴 수 있음", "단기 매매는 손실이 급격히 커질 수 있음", "기대수익만 보고 들어가면 위험"],
+    "en": ["Recovery can take a long time after drawdowns", "Short-term trading risk is amplified", "Don’t focus only on upside expectations"]
+  },
+
+  "faq": [
+    {
+      "q": { "ko": "TQQQ는 장기투자해도 되나요?", "en": "Is TQQQ good for long-term?" },
+      "a": {
+        "ko": "사람마다 다르지만, 레버리지 ETF는 구조상 변동성과 드로우다운이 매우 큽니다. 장기 결과도 시점에 따라 크게 갈릴 수 있어요.",
+        "en": "It depends. Leveraged ETFs can have large volatility/drawdowns. Long-term results can vary dramatically by entry period."
+      }
+    }
+  ],
+
+  "relatedTickers": ["QQQ", "SPY", "SCHD"]
+}

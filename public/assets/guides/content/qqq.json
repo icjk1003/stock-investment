@@ -1,0 +1,68 @@
+{
+  "ticker": "QQQ",
+  "theme": { "color": "amber" },
+
+  "seoTitle": {
+    "ko": "QQQ 가이드 | 나스닥100 백테스트 · 미래 시뮬레이터",
+    "en": "QQQ Guide | NASDAQ-100 Backtest · Future Simulator"
+  },
+  "seoDesc": {
+    "ko": "QQQ(나스닥100) 가이드. 배당보다는 총수익(가격+배당) 관점으로 백테스트/미래 시뮬을 확인하세요.",
+    "en": "QQQ guide. Focus on total return (price + dividends) with backtest and future simulation."
+  },
+
+  "heroBadge": {
+    "ko": "성장/테크 중심 (NASDAQ-100)",
+    "en": "Growth / Tech Tilt (NASDAQ-100)"
+  },
+  "heroTitle": { "ko": "QQQ 가이드", "en": "QQQ Guide" },
+  "heroDesc": {
+    "ko": "QQQ는 ‘배당 ETF’라기보다 성장(가격 수익) ETF로 보는 경우가 많아요.\n배당은 참고로 두고, 총수익(가격+배당)을 중심으로 보세요.",
+    "en": "QQQ is often viewed as a growth (price-return) ETF.\nUse dividends as reference and focus on total return (price + dividends)."
+  },
+
+  "summaryCards": [
+    {
+      "kicker": { "ko": "핵심", "en": "Core" },
+      "head": { "ko": "나스닥100", "en": "NASDAQ-100" },
+      "desc": { "ko": "대형 성장주/테크 비중 높음", "en": "Large-cap growth with tech concentration" }
+    },
+    {
+      "kicker": { "ko": "성격", "en": "Style" },
+      "head": { "ko": "성장 중심", "en": "Growth focused" },
+      "desc": { "ko": "수익의 대부분이 가격 변화에서 발생", "en": "Returns mainly from price movement" }
+    },
+    {
+      "kicker": { "ko": "리스크", "en": "Risk" },
+      "head": { "ko": "변동성↑", "en": "Higher volatility" },
+      "desc": { "ko": "하락장 체감이 클 수 있음", "en": "Drawdowns can feel larger" }
+    },
+    {
+      "kicker": { "ko": "포인트", "en": "Point" },
+      "head": { "ko": "분산/집중", "en": "Concentration" },
+      "desc": { "ko": "섹터 집중이 상승/하락을 키울 수 있음", "en": "Sector concentration can amplify cycles" }
+    }
+  ],
+
+  "goodFor": {
+    "ko": ["장기(5년+) 성장 노출을 원할 때", "총수익 중심으로 보는 투자자", "변동성을 감수하며 적립식 매수"],
+    "en": ["Long-term growth exposure (5y+)", "Total-return oriented investors", "Those comfortable with volatility and DCA"]
+  },
+  "watchOuts": {
+    "ko": ["테크 집중으로 하락장 충격이 커질 수 있음", "배당 수익 ‘생활비’ 목적엔 부적합", "단기(1~2년)에는 불편할 수 있음"],
+    "en": ["Tech concentration can amplify downturns", "Low yield → not ideal for income goals", "Short horizons can be uncomfortable"]
+  },
+
+  "faq": [
+    {
+      "q": { "ko": "QQQ는 배당 ETF인가요?", "en": "Is QQQ a dividend ETF?" },
+      "a": { "ko": "보통은 아니에요. 성장/가격수익 성격이 강하고, 배당은 참고용에 가깝습니다.", "en": "Usually no. It’s more of a growth/price-return ETF; dividends are secondary." }
+    },
+    {
+      "q": { "ko": "SPY(VOO)와 차이는?", "en": "How is it different from SPY (or VOO)?" },
+      "a": { "ko": "SPY/VOO는 더 넓게 분산된 시장(미국 대형주 전반)이고, QQQ는 테크/성장 비중이 높아 변동성이 커질 수 있어요.", "en": "SPY/VOO is broader diversification; QQQ is more tech/growth tilted and can be more volatile." }
+    }
+  ],
+
+  "relatedTickers": ["SPY", "SCHD", "TQQQ"]
+}

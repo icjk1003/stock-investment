@@ -1,0 +1,94 @@
+{
+  "ticker": "SCHD",
+  "theme": { "color": "amber" },
+
+  "seoTitle": {
+    "ko": "SCHD 가이드 | 배당성장 ETF 백테스트 · 미래 시뮬레이터",
+    "en": "SCHD Guide | Dividend Growth Backtest · Future Simulator"
+  },
+  "seoDesc": {
+    "ko": "SCHD(배당성장 ETF) 가이드. 백테스트/미래 시뮬과 배당·세금·환율(지역별) 기준을 함께 확인하세요.",
+    "en": "SCHD (Dividend Growth ETF) guide. Use backtest/future simulator with dividends, taxes, and region policy."
+  },
+
+  "heroBadge": {
+    "ko": "배당 성장 중심 (Dividend Growth)",
+    "en": "Dividend Growth ETF"
+  },
+  "heroTitle": {
+    "ko": "SCHD 가이드",
+    "en": "SCHD Guide"
+  },
+  "heroDesc": {
+    "ko": "SCHD는 대표적인 배당 성장 ETF로 많이 알려져 있어요.\n배당을 “생활비”로 보기보다는, 배당 성장 + 가격(총수익)을 함께 보는 관점이 중요합니다.",
+    "en": "SCHD is widely known as a dividend-growth ETF.\nRather than focusing only on income, consider total return (price + dividends) together."
+  },
+
+  "summaryCards": [
+    {
+      "kicker": { "ko": "핵심", "en": "Core" },
+      "head": { "ko": "배당 성장", "en": "Dividend growth" },
+      "desc": { "ko": "배당을 꾸준히 늘리는 기업 중심", "en": "Holds companies with a history of growing dividends" }
+    },
+    {
+      "kicker": { "ko": "성격", "en": "Style" },
+      "head": { "ko": "방어/현금흐름", "en": "Defensive / cashflow" },
+      "desc": { "ko": "총수익 + 배당 조합", "en": "Mix of price return + dividends" }
+    },
+    {
+      "kicker": { "ko": "리스크", "en": "Risk" },
+      "head": { "ko": "성장률 제한", "en": "Lower growth ceiling" },
+      "desc": { "ko": "초고성장 ETF 대비 상승이 둔할 수 있음", "en": "May lag high-growth ETFs in strong bull markets" }
+    },
+    {
+      "kicker": { "ko": "포인트", "en": "Point" },
+      "head": { "ko": "정책/세금", "en": "Tax & policy" },
+      "desc": { "ko": "지역/계좌에 따라 체감 수익이 달라짐", "en": "Outcomes differ by region/account type" }
+    }
+  ],
+
+  "goodFor": {
+    "ko": [
+      "배당 성장 + 현금흐름을 장기적으로 쌓고 싶은 경우",
+      "변동성을 조금 낮추면서도 주식 비중을 유지하고 싶은 경우",
+      "‘초고성장’보다 ‘꾸준함’을 선호하는 경우"
+    ],
+    "en": [
+      "Long-term investors seeking dividend growth + cashflow",
+      "Those preferring relatively smoother equity exposure",
+      "People who value consistency over aggressive growth"
+    ]
+  },
+
+  "watchOuts": {
+    "ko": [
+      "상승장에서는 성장주 ETF보다 수익이 덜 나올 수 있음",
+      "배당이 있어도 주가 하락은 그대로 발생할 수 있음",
+      "세금/정책(그리고 FX)이 결과에 영향을 줌"
+    ],
+    "en": [
+      "May lag growth ETFs in strong bull markets",
+      "Dividends do not prevent drawdowns",
+      "Taxes/policy (and FX) can materially change outcomes"
+    ]
+  },
+
+  "faq": [
+    {
+      "q": { "ko": "이 ETF는 배당투자용인가요?", "en": "Is this a dividend ETF?" },
+      "a": {
+        "ko": "SCHD는 배당 성장 성격이 강하지만, ‘배당만’이 아니라 총수익(가격+배당) 관점으로 함께 보는 게 좋아요.",
+        "en": "SCHD is dividend-growth oriented, but it’s best evaluated using total return (price + dividends), not income alone."
+      }
+    },
+    {
+      "q": { "ko": "다른 대표 ETF랑 뭐가 달라요?", "en": "How is it different from broad index ETFs?" },
+      "a": {
+        "ko": "S&P500/나스닥100 대비 스타일이 다르고, 배당/방어 성향이 상대적으로 강한 편이에요.",
+        "en": "Compared to broad indexes, SCHD has a stronger dividend/value tilt and can behave differently across cycles."
+      }
+    }
+  ],
+
+  "relatedTickers": ["SPY", "QQQ", "TQQQ"]
+}

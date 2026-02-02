@@ -1,0 +1,37 @@
+<!-- /assets/guides/guide-template.html -->
+<section class="bg-white border border-slate-100 rounded-3xl shadow-sm p-6 md:p-10">
+  <!-- Hero -->
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="min-w-[260px]">
+      <div class="inline-flex items-center gap-2 text-xs font-black px-3 py-1 rounded-full"
+           data-bind="heroBadge"
+           data-badge-class="">
+        <!-- badge text -->
+      </div>
+
+      <h1 class="mt-3 text-3xl md:text-4xl font-black"
+          data-bind="heroTitle"
+          data-title-class="">
+        <!-- title -->
+      </h1>
+
+      <p class="mt-3 text-slate-600 leading-relaxed"
+         data-bind="heroDesc">
+        <!-- desc -->
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <a href="#" class="text-center px-5 py-3 rounded-2xl font-extrabold transition"
+         data-go="backtest" data-bind="ctaBacktest" data-ticker="">
+        <!-- Backtest CTA -->
+      </a>
+      <a href="#" class="text-center px-5 py-3 rounded-2xl font-extrabold transition"
+         data-go="future" data-bind="ctaFuture" data-ticker="">
+        <!-- Future CTA -->
+      </a>
+    </div>
+  </div>
+
+  <!-- Price Widget -->
+  <div class="mt-8 bg-white bo
