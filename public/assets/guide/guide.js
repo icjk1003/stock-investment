@@ -452,8 +452,9 @@ export async function renderGuide(ctx, { ticker, market = "nasdaq" }) {
   el("g_btn_backtest").textContent = data.btnBacktest;
   el("g_btn_future").textContent = data.btnFuture;
 
-  el("g_btn_backtest").setAttribute("data-ticker", t);
-  el("g_btn_future").setAttribute("data-ticker", t);
+  const regionCode = (ctx?.region?.code || "kr").toLowerCase();
+  el("g_btn_backtest").setAttribute("href", `/${regionCode}/tools/stock/backtest/?ticker=${encodeURIComponent(t)}`);
+  el("g_btn_future").setAttribute("href", `/${regionCode}/tools/stock/future/?ticker=${encodeURIComponent(t)}`);
 
   // PRICE
   el("g_price_title").textContent = data.priceTitle;
