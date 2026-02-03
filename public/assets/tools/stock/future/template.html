@@ -13,58 +13,59 @@
 <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
   <div class="lg:col-span-1">
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-      <h2 id="settingsTitle" class="text-xl font-semibold border-b pb-2 text-gray-800">Settings (USD)</h2>
+      <h2 id="settingsTitle" data-i18n="futureSettingsTitle"
+        class="text-xl font-semibold border-b pb-2 text-gray-800">Settings</h2>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Ticker</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="ticker">Ticker</label>
         <input type="text" id="ticker"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500"/>
         <p class="text-[11px] text-gray-400 mt-1">From guide button / URL</p>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Initial Invest ($)</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futureInitial">Initial Invest ($)</label>
         <input type="number" id="initial" value="50000"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Monthly Deposit ($)</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futureMonthly">Monthly Deposit ($)</label>
         <input type="number" id="monthly" value="1000"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Div Yield (%)</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futureYield">Div Yield (%)</label>
         <input type="number" id="yield" value="3.4" step="0.1"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Div Growth (%)</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futureDivGrowth">Div Growth (%)</label>
         <input type="number" id="divGrowth" value="11" step="0.1"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Price Growth (%)</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futurePriceGrowth">Price Growth (%)</label>
         <input type="number" id="priceGrowth" value="5" step="0.1"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Dividend Tax Rate (%)</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futureTax">Dividend Tax Rate (%)</label>
         <input type="number" id="tax" value="15" step="0.1"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-500">Years</label>
+        <label class="block text-xs font-medium text-gray-500" data-i18n="futureYears">Years</label>
         <input type="number" id="years" value="20"
           class="w-full mt-1 p-2 border rounded-md outline-blue-500">
       </div>
 
-      <button id="btnCalc"
+      <button id="btnCalc" data-i18n="futureCalc"
         class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">
         Calculate
       </button>
@@ -80,15 +81,15 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
       <div class="bg-slate-900 p-5 rounded-2xl text-white shadow-lg">
-        <p class="text-slate-400 text-xs uppercase">Total Balance</p>
+        <p class="text-slate-400 text-xs uppercase" data-i18n="futureTotalBalance">Total Balance</p>
         <p id="resTotal" class="text-xl font-bold mt-1">-</p>
       </div>
       <div class="bg-emerald-600 p-5 rounded-2xl text-white shadow-lg">
-        <p class="text-emerald-100 text-xs uppercase">Total Gains</p>
+        <p class="text-emerald-100 text-xs uppercase" data-i18n="futureTotalGains">Total Gains</p>
         <p id="resProfit" class="text-xl font-bold mt-1">-</p>
       </div>
       <div class="bg-amber-500 p-5 rounded-2xl text-white shadow-lg">
-        <p class="text-amber-50 text-xs uppercase">Monthly Div</p>
+        <p class="text-amber-50 text-xs uppercase" data-i18n="futureMonthlyDiv">Monthly Div</p>
         <p id="resMonthlyDiv" class="text-xl font-bold mt-1">-</p>
       </div>
     </div>
@@ -96,16 +97,16 @@
 </div>
 
 <div class="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
-  <h2 class="text-xl font-semibold mb-4 border-b pb-2">Annual Data Detail</h2>
+  <h2 class="text-xl font-semibold mb-4 border-b pb-2" data-i18n="futureAnnualDetail">Annual Data Detail</h2>
   <table class="w-full text-left text-sm border-collapse">
     <thead>
       <tr class="bg-gray-100 text-gray-600 border-b text-xs uppercase">
-        <th class="p-3">Year/Month</th>
-        <th class="p-3">Principal</th>
-        <th class="p-3">Cap Gains</th>
-        <th class="p-3">Dividends</th>
-        <th class="p-3">Total Value</th>
-        <th class="p-3">Monthly Div</th>
+        <th class="p-3" data-i18n="futureYearMonth">Year/Month</th>
+        <th class="p-3" data-i18n="futurePrincipal">Principal</th>
+        <th class="p-3" data-i18n="futureCapGains">Cap Gains</th>
+        <th class="p-3" data-i18n="futureDividends">Dividends</th>
+        <th class="p-3" data-i18n="futureTotalValue">Total Value</th>
+        <th class="p-3" data-i18n="futureMonthlyDivCol">Monthly Div</th>
       </tr>
     </thead>
     <tbody id="tableBody"></tbody>

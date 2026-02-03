@@ -1,6 +1,5 @@
 // /assets/tools/stock/backtest/page.js
-// - loads template.html into #toolRoot
-// - runs DCA backtest for any ticker (?ticker=... or ctx.ticker)
+import { applyI18n } from "/assets/app.js";
 
 let unifiedChart;
 
@@ -31,7 +30,7 @@ function getTicker(ctx) {
 function toggleMonths(key) {
   document.querySelectorAll(`.month-${key}`).forEach(r => r.classList.toggle("active"));
 }
-window.toggleMonths = toggleMonths; // table onclick uses it
+window.toggleMonths = toggleMonths;
 
 function clampToNearestTradingDay(pricesAll, dateStr, direction) {
   if (!pricesAll?.length) return null;
@@ -62,7 +61,6 @@ function buildContributionSet(prices, freq, startDateStr) {
     return isContribution;
   }
 
-  // monthly: first trading day in each month (after start)
   let lastMonth = null;
   for (const p of prices) {
     const mk = monthKey(p.date);
@@ -92,15 +90,12 @@ function updateChart(labels, principal, capGain, divNet, total) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        y: { stacked: true, ticks: { callback: v => "$" + Math.round(v / 1000) + "k" } }
-      },
+      scales: { y: { stacked: true, ticks: { callback: v => "$" + Math.round(v / 1000) + "k" } } },
       plugins: { legend: { display: false } }
     }
   });
 }
 
-// allocate quarterly dividends into 3 months (boundary-adjusted)
 function buildMonthlyDivAllocatedUSD(months) {
   const n = months.length;
   const alloc = new Array(n).fill(0);
@@ -109,11 +104,9 @@ function buildMonthlyDivAllocatedUSD(months) {
     const q = months[i].monthDivNetUSD || 0;
     if (q <= 0) continue;
 
-    // default: current month + previous 2 months
     const candidate = [i, i - 1, i - 2];
     let picked = candidate.filter(idx => idx >= 0 && idx < n);
 
-    // if missing (early boundary), push forward to fill 3 months
     let next = i + 1;
     while (picked.length < 3 && next < n) {
       if (!picked.includes(next)) picked.push(next);
@@ -155,7 +148,6 @@ async function runBacktest() {
     return;
   }
 
-  // clamp by data range, then adjust to nearest trading days
   const firstAvailable = data.firstDate || pricesAll[0].date;
   const lastAvailable = data.lastDate || pricesAll[pricesAll.length - 1].date;
 
@@ -179,14 +171,8 @@ async function runBacktest() {
   el("startDate").value = startDate;
   el("endDate").value = endDate;
 
-  if (endDate < startDate) {
-    alert("After adjustment, end date became earlier than start date.");
-    return;
-  }
-
   const prices = pricesAll.filter(p => p.date >= startDate && p.date <= endDate);
 
-  // dividend map (date -> perShare)
   const divMap = new Map();
   for (const d of divsAll) {
     if (!d?.date) continue;
@@ -195,10 +181,8 @@ async function runBacktest() {
     divMap.set(d.date, (divMap.get(d.date) || 0) + amt);
   }
 
-  // contribution days
   const contributeSet = buildContributionSet(prices, freq, startDate);
 
-  // simulate (USD)
   let shares = 0;
   let principalUSD = 0;
   let divNetUSD = 0;
@@ -212,9 +196,8 @@ async function runBacktest() {
     const { date, close } = prices[i];
     const mk = monthKey(date);
 
-    if (currentMonth === null) {
-      currentMonth = mk;
-    } else if (mk !== currentMonth) {
+    if (currentMonth === null) currentMonth = mk;
+    else if (mk !== currentMonth) {
       const prev = prices[i - 1];
       const valueUSD = shares * prev.close + cashUSD;
       const capGainUSD = valueUSD - principalUSD - divNetUSD;
@@ -226,7 +209,7 @@ async function runBacktest() {
         divNetUSD,
         capGainUSD,
         valueUSD,
-        monthDivNetUSD, // actual (quarterly) payout in that month (net)
+        monthDivNetUSD,
         shares,
       });
 
@@ -234,13 +217,11 @@ async function runBacktest() {
       monthDivNetUSD = 0;
     }
 
-    // buy
     if (contributeSet.has(date)) {
       shares += (buyUSD / close);
       principalUSD += buyUSD;
     }
 
-    // dividend event
     const perShare = divMap.get(date) || 0;
     if (perShare > 0) {
       const gross = shares * perShare;
@@ -253,7 +234,6 @@ async function runBacktest() {
     }
   }
 
-  // last month snapshot
   const last = prices[prices.length - 1];
   const lastValueUSD = shares * last.close + cashUSD;
   const lastCapGainUSD = lastValueUSD - principalUSD - divNetUSD;
@@ -269,10 +249,7 @@ async function runBacktest() {
     shares,
   });
 
-  // allocate monthly dividend from quarterly payouts
   const monthlyAllocUSD = buildMonthlyDivAllocatedUSD(months);
-
-  // summary cards
   const finalMonthlyDivUSD = monthlyAllocUSD[months.length - 1] || 0;
 
   el("resTotal").innerText = fmtUSD(lastValueUSD);
@@ -282,7 +259,6 @@ async function runBacktest() {
   el("dataNotice").innerText =
     `Price data: ${data.firstDate || "-"} ~ ${data.lastDate || "-"} / Backtest: ${startDate} ~ ${endDate}`;
 
-  // build table/chart
   const labels = ["Start"];
   const pData = [0];
   const gData = [0];
@@ -292,7 +268,6 @@ async function runBacktest() {
   const tableBody = el("tableBody");
   tableBody.innerHTML = "";
 
-  // group by year
   const byYear = new Map();
   for (let i = 0; i < months.length; i++) {
     const m = months[i];
@@ -306,20 +281,15 @@ async function runBacktest() {
     const list = byYear.get(y);
 
     const yLast = list[list.length - 1];
-    const yPrincipal = yLast.principalUSD;
-    const yDiv = yLast.divNetUSD;
-    const yCapGain = yLast.capGainUSD;
-    const yValue = yLast.valueUSD;
-
     const yearKey = `y${y}`;
 
     tableBody.innerHTML += `
       <tr class="year-header border-b hover:bg-blue-50 cursor-pointer" onclick="toggleMonths('${yearKey}')">
         <td class="p-3 font-bold text-blue-700">▶ ${y}</td>
-        <td class="p-3">${fmtUSD(yPrincipal)}</td>
-        <td class="p-3 text-emerald-600 font-semibold">${fmtUSD(yCapGain)}</td>
-        <td class="p-3 text-amber-600 font-semibold">${fmtUSD(yDiv)}</td>
-        <td class="p-3 font-black text-slate-900 bg-slate-50">${fmtUSD(yValue)}</td>
+        <td class="p-3">${fmtUSD(yLast.principalUSD)}</td>
+        <td class="p-3 text-emerald-600 font-semibold">${fmtUSD(yLast.capGainUSD)}</td>
+        <td class="p-3 text-amber-600 font-semibold">${fmtUSD(yLast.divNetUSD)}</td>
+        <td class="p-3 font-black text-slate-900 bg-slate-50">${fmtUSD(yLast.valueUSD)}</td>
         <td class="p-3 font-bold text-gray-700">-</td>
         <td class="p-3 font-bold text-gray-700">-</td>
       </tr>
@@ -377,7 +347,6 @@ async function initDefaults(ticker) {
 export async function init(ctx) {
   const root = document.getElementById("toolRoot");
 
-  // load template
   const res = await fetch("/assets/tools/stock/backtest/template.html", { cache: "no-cache" });
   if (!res.ok) {
     root.innerHTML = `<div class="rounded-3xl bg-white border border-rose-200 p-6">
@@ -385,15 +354,21 @@ export async function init(ctx) {
     </div>`;
     return;
   }
+
   root.innerHTML = await res.text();
+
+  // ✅ template가 DOM에 생긴 뒤 i18n 적용
+  applyI18n(ctx.dict);
 
   const ticker = getTicker(ctx);
 
-  // titles
-  el("pageTitle").textContent = `${ticker} Backtest (DCA) 📈`;
-  el("pageDesc").textContent = `If you bought ${ticker} from a past date with monthly/daily contributions, this shows cumulative performance with price & dividends (USD).`;
+  // ✅ 타이틀/설명 ko/en 분기
+  const isKo = (ctx?.lang || ctx?.region?.lang) === "ko";
+  el("pageTitle").textContent = isKo ? `${ticker} 백테스트 (적립식) 📈` : `${ticker} Backtest (DCA) 📈`;
+  el("pageDesc").textContent = isKo
+    ? `${ticker}를 과거 특정 시점부터 적립식으로 매수했을 때 가격 + 배당(세후) 누적 성과를 계산합니다.`
+    : `If you bought ${ticker} from a past date with monthly/daily contributions, this shows cumulative performance with price & dividends (USD).`;
 
-  // bind
   el("btnCalc").addEventListener("click", runBacktest);
 
   await initDefaults(ticker);

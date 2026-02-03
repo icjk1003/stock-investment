@@ -1,6 +1,5 @@
 // /assets/tools/stock/future/page.js
-// - loads template.html into #toolRoot
-// - runs future simulator for any ticker (?ticker=... or ctx.ticker)
+import { applyI18n } from "/assets/app.js";
 
 let unifiedChart;
 
@@ -41,9 +40,7 @@ function updateChart(labels, p, g, d, t) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        y: { stacked: true, ticks: { callback: v => "$" + (v / 1000).toLocaleString("en-US") + "k" } }
-      },
+      scales: { y: { stacked: true, ticks: { callback: v => "$" + (v / 1000).toLocaleString("en-US") + "k" } } },
       plugins: { legend: { display: false } }
     }
   });
@@ -89,16 +86,13 @@ function runSimulation() {
     let monthHtml = "";
 
     for (let m = 1; m <= 12; m++) {
-      // deposit
       totalPrincipal += monthly;
       currentBalance += monthly;
 
-      // capital gains (monthly)
       const gain = currentBalance * (priceGrowth / 12);
       totalCapGain += gain;
       currentBalance += gain;
 
-      // dividends (monthly) and reinvest
       const netDiv = (currentBalance * (currentYield / 12)) * (1 - tax);
       yearlyDivTotal += netDiv;
       totalDiv += netDiv;
@@ -116,7 +110,6 @@ function runSimulation() {
       `;
     }
 
-    // dividend yield grows yearly
     currentYield *= (1 + divGrowth);
 
     labels.push("Yr " + y);
@@ -150,7 +143,6 @@ function runSimulation() {
 export async function init(ctx) {
   const root = document.getElementById("toolRoot");
 
-  // load template
   const res = await fetch("/assets/tools/stock/future/template.html", { cache: "no-cache" });
   if (!res.ok) {
     root.innerHTML = `<div class="rounded-3xl bg-white border border-rose-200 p-6">
@@ -158,18 +150,21 @@ export async function init(ctx) {
     </div>`;
     return;
   }
+
   root.innerHTML = await res.text();
+
+  // ✅ template가 DOM에 생긴 뒤 i18n 적용
+  applyI18n(ctx.dict);
 
   const ticker = getTicker(ctx);
   el("ticker").value = ticker;
 
-  // titles
-  el("pageTitle").textContent = `${ticker} Asset Simulator 📈`;
-  el("pageSub").textContent = "Principal · Capital Gains · Dividend Growth";
+  // ✅ 타이틀/서브 ko/en 분기
+  const isKo = (ctx?.lang || ctx?.region?.lang) === "ko";
+  el("pageTitle").textContent = isKo ? `${ticker} 미래 시뮬레이터 📈` : `${ticker} Asset Simulator 📈`;
+  el("pageSub").textContent = isKo ? "원금 · 자본차익 · 배당 성장" : "Principal · Capital Gains · Dividend Growth";
 
-  // bind
   el("btnCalc").addEventListener("click", runSimulation);
 
-  // first render (기존 future.html처럼 자동 실행)
   runSimulation();
 }
