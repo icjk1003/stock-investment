@@ -245,10 +245,11 @@ function bindRegionNavDelegated() {
 /**
  * ✅ data-go 링크 라우팅
  * - guide: /{region}/guide/{market}/ticker/{ticker}/
- * - backtest: /{region}/tools/backtest/?ticker=...
- * - future:  /{region}/tools/future/?ticker=...
+ * - tool:  /{region}/tools/{toolPath}/?ticker=...
+ * - (legacy) backtest: /{region}/tools/backtest/?ticker=...
+ * - (legacy) future:  /{region}/tools/future/?ticker=...
  */
-function goUrl(kind, region, ticker, market = "nasdaq") {
+function goUrl(kind, region, ticker, market = "nasdaq", toolPath = "") {
   const r = normalizeRegion(region) || DEFAULT_REGION;
   const t = (ticker || "").trim().toUpperCase();
   const m = (market || "nasdaq").trim().toLowerCase();
@@ -256,8 +257,18 @@ function goUrl(kind, region, ticker, market = "nasdaq") {
   if (!t) return `/${r}/`;
 
   if (kind === "guide") return `/${r}/guide/${m}/ticker/${t.toLowerCase()}/`;
+
+  // ✅ NEW: 일반화된 tool 라우팅
+  if (kind === "tool") {
+    const p = String(toolPath || "").replace(/^\/+|\/+$/g, ""); // trim slashes
+    if (!p) return `/${r}/tools/`;
+    return `/${r}/tools/${p}/?ticker=${encodeURIComponent(t)}`;
+  }
+
+  // ✅ LEGACY 호환 유지
   if (kind === "backtest") return `/${r}/tools/backtest/?ticker=${encodeURIComponent(t)}`;
-  if (kind === "future") return `/${r}/tools/future/?ticker=${encodeURIComponent(t)}`;
+  if (kind === "future")  return `/${r}/tools/future/?ticker=${encodeURIComponent(t)}`;
+
   return `/${r}/`;
 }
 
@@ -275,11 +286,12 @@ function bindGoLinksDelegated() {
     const kind = String(a.getAttribute("data-go") || "").toLowerCase();
     const ticker = a.getAttribute("data-ticker") || "";
     const market = a.getAttribute("data-market") || "nasdaq";
+    const toolPath = a.getAttribute("data-tool-path") || ""; // ✅ NEW
 
     const ctx = window.__MVP_CTX || null;
     const region = ctx?.region?.code || guessRegionFromPath() || DEFAULT_REGION;
 
-    const url = goUrl(kind, region, ticker, market);
+    const url = goUrl(kind, region, ticker, market, toolPath);
     e.preventDefault();
     location.href = url;
   });

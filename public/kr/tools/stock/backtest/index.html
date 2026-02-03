@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>MyValuePick | Stock Backtest</title>
+  <meta name="description" content="Stock backtest tool." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+    body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+  </style>
+</head>
+
+<!-- ✅ 여기만 바꿔끼우면 됨 -->
+<body data-tool="stock/backtest" class="p-4 md:p-8 bg-slate-50 text-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div data-partial="header"></div>
+
+    <!-- ✅ tool UI가 여기에 렌더됨 -->
+    <main id="toolRoot"></main>
+
+    <div data-partial="footer"></div>
+  </div>
+
+  <script type="module">
+    import { boot } from "/assets/app.js";
+    import { mountTool } from "/assets/tools/shell.js";
+
+    const ctx = await boot();
+    await mountTool(ctx);
+  </script>
+</body>
+</html>
