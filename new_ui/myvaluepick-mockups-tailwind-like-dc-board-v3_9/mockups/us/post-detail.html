@@ -1,0 +1,65 @@
+<!doctype html><html data-theme="dark" lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Post detail (Mock)</title><link rel="stylesheet" href="../shared/assets/styles.css"/></head>
+<body data-country="us" data-page="post-detail">
+<div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="Search ticker/company…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>Country</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" selected>US</option>
+      <option value="../kr/home.html" >KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>Language</span>
+    <select><option >KO</option><option selected>EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">Login</button>
+</div></div>
+<div class="container">
+<div class="grid">
+<div class="card">
+<div class="hd"><div>
+<div class="meta"><span>🕒 2h ago</span><span>🏷 Earnings</span><span class="mono">TSLA</span></div>
+<h1 class="h1" style="margin-top:10px">Tesla preview: what to watch this quarter</h1>
+<p class="p">Hooky intro to maximize scroll depth.</p></div></div>
+
+<div class="bd">
+<div class="ad wide"><div class="tag">Ad slot — top in-article</div><div class="box">728×90</div></div>
+<div style="margin-top:16px" class="notice">✅ Short paragraphs + subheads → higher readability.</div>
+<h2 class="h2" style="margin-top:16px">1) What matters most</h2><p class="p">• Guidance • Margins • Timelines</p>
+<div style="margin-top:16px" class="ad wide"><div class="tag">Ad slot — mid article</div><div class="box">728×90</div></div>
+<h2 class="h2" style="margin-top:16px">2) Next actions</h2><p class="p">Encourage “Backtest” and “More posts”.</p>
+<div class="row" style="margin-top:14px">
+<a class="btn primary" href="backtest.html?market=nasdaq&symbol=TSLA">Run backtest</a>
+<a class="btn" href="posts.html">More posts</a>
+<a class="btn" href="security.html?market=nasdaq&symbol=TSLA">Security</a>
+</div>
+</div>
+
+<div class="ft"><div class="kicker">Related posts</div><a class="btn" href="post-detail.html?market=nasdaq&symbol=TSLA&post=104">Next: event recap</a></div>
+</div>
+
+<div>
+<div class="card"><div class="hd"><div><h2 class="h2">Related tickers</h2><div class="kicker">Cross-linking boosts PV/session</div></div></div>
+<div class="bd"><div class="row">
+<a class="badge" href="security.html?market=nasdaq&symbol=NVDA">NVDA</a>
+<a class="badge" href="security.html?market=nasdaq&symbol=AAPL">AAPL</a>
+<a class="badge" href="security.html?market=nasdaq&symbol=SPY">SPY</a>
+</div></div></div>
+<div class="ad small sticky" style="margin-top:14px"><div class="tag">Ad slot — sidebar</div><div class="box">300×600</div></div>
+</div>
+
+</div></div>
+<script src="../shared/assets/ui.js"></script></body></html>

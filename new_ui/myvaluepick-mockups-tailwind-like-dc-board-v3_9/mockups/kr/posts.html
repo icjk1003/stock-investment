@@ -1,0 +1,62 @@
+<!doctype html><html data-theme="dark" lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>게시글 (Mock)</title><link rel="stylesheet" href="../shared/assets/styles.css"/></head>
+<body data-country="kr" data-page="posts">
+<div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="티커/회사 검색…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>국가</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" >US</option>
+      <option value="../kr/home.html" selected>KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>언어</span>
+    <select><option selected>KO</option><option >EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">로그인</button>
+</div></div>
+<div class="container">
+<div class="grid">
+<div class="card">
+<div class="hd"><div><h1 class="h1">최신 게시글</h1><div class="kicker">피드형 레이아웃 → 노출↑</div></div>
+<div class="row"><span class="badge">필터</span><button class="btn small">실적</button><button class="btn small">배당</button><button class="btn small">매크로</button></div></div>
+
+<a class="postCard" href="post-detail.html?market=kospi&symbol=005930&post=201"><div class="thumb"></div><div>
+<div class="meta"><span>🕒 2시간</span><span>🏷 실적</span><span class="mono">005930</span></div>
+<div class="h3" style="margin-top:6px">삼성전자: 체크포인트</div><div class="p" style="margin-top:6px">짧은 요약…</div></div></a>
+
+<a class="postCard" href="post-detail.html?market=kospi&symbol=000660&post=202"><div class="thumb"></div><div>
+<div class="meta"><span>🕒 6시간</span><span>🏷 반도체</span><span class="mono">000660</span></div>
+<div class="h3" style="margin-top:6px">SK하이닉스: 리스크</div><div class="p" style="margin-top:6px">짧은 요약…</div></div></a>
+
+<div class="bd"><div class="ad wide"><div class="tag">광고 — 피드 중간</div><div class="box">728×90</div></div></div>
+
+<a class="postCard" href="post-detail.html?market=nasdaq&symbol=TSLA&post=203"><div class="thumb"></div><div>
+<div class="meta"><span>🕒 1일</span><span>🏷 글로벌</span><span class="mono">TSLA</span></div>
+<div class="h3" style="margin-top:6px">TSLA: 이벤트 요약</div><div class="p" style="margin-top:6px">짧은 요약…</div></div></a>
+
+<div class="ft"><div class="kicker">다음 페이지 클릭 유도</div><button class="btn">더 보기</button></div>
+</div>
+
+<div>
+<div class="card"><div class="hd"><div><h2 class="h2">구독</h2><div class="kicker">재방문↑</div></div></div>
+<div class="bd"><div class="input"><input placeholder="이메일"/></div><div class="hint">주간 하이라이트(목업)</div>
+<button class="btn" id="themeToggle" type="button">🌙 Dark</button>
+      <button class="btn primary" style="margin-top:10px;width:100%">구독하기</button></div></div>
+<div class="ad small sticky" style="margin-top:14px"><div class="tag">광고 — 사이드</div><div class="box">300×250</div></div>
+</div>
+
+</div></div>
+<script src="../shared/assets/ui.js"></script></body></html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>MyValuePick · 주식 갤러리</title>
+  <link rel="stylesheet" href="../shared/assets/styles.css"/>
+</head>
+<body>
+  <div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="티커/회사 검색…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>국가</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" >US</option>
+      <option value="../kr/home.html" selected>KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>언어</span>
+    <select><option selected>KO</option><option >EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">로그인</button>
+</div></div>
+
+  <div class="container boardWide" style="margin-top:16px">
+    <div class="boardLayoutCenter">
+      <div class="adTall">
+        <div class="ad small sticky"><div class="tag">AD — LEFT</div><div class="box">160×600</div></div>
+      </div>
+
+      <div class="boardCardWrap">
+        <div class="card">
+          <div class="boardHeader">
+            <div>
+              <div class="galleryBadge"><span class="dot"></span><span class="txt">주식 갤러리</span></div>
+              <div class="gallerySub">게시판 전체보기 · 페이지네이션/검색/인라인 광고(목업)</div>
+            </div>
+          </div>
+
+          <div style="overflow:auto">
+            <table class="boardTable">
+              <thead>
+                <tr>
+                  <th class="colNo">번호</th>
+                  <th class="colTag">말머리</th>
+                  <th>제목</th>
+                  <th class="colVotes">추천</th>
+                  <th class="colViews">조회</th>
+                  <th class="colTime">작성</th>
+                </tr>
+              </thead>
+              <tbody id="boardRows"></tbody>
+            </table>
+          </div>
+
+          <div class="pagerWrap">
+            <div id="boardPagination" class="pager"></div>
+          </div>
+
+          <!-- Search MUST be below pagination -->
+          <div class="boardSearchBelow">
+            <div class="boardSearchBar">
+              <div class="pill">
+                <select id="boardSearchType">
+                  <option value="all">전체</option>
+                  <option value="title">제목</option>
+                  <option value="body">내용</option>
+                  <option value="user">글쓴이</option>
+                  <option value="comment">댓글</option>
+                </select>
+              </div>
+              <div class="input searchInputRightIcon">
+                <input id="boardSearchInput" placeholder="검색어 입력"/>
+                <button class="iconBtnIn" id="boardSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="adTall">
+        <div class="ad small sticky"><div class="tag">AD — RIGHT</div><div class="box">160×600</div></div>
+      </div>
+    </div>
+
+    <div class="footer" style="margin-top:16px">
+      <div class="cols">
+        <div><div class="brand"><div class="brand-badge">M</div><div>MyValuePick</div></div></div>
+        <div class="p">MyValuePick</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/assets/ui.js"></script>
+</body>
+</html>

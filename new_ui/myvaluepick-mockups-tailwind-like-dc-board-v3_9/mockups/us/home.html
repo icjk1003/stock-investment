@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>MyValuePick · Home</title>
+  <link rel="stylesheet" href="../shared/assets/styles.css"/>
+</head>
+<body>
+  <div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="Search ticker/company…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>Country</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" selected>US</option>
+      <option value="../kr/home.html" >KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>Language</span>
+    <select><option >KO</option><option selected>EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">Login</button>
+</div></div>
+
+  <div class="container boardWide">
+    <div class="boardWrap">
+      <div class="card">
+        <div class="boardHeader">
+          <div>
+            <div class="galleryBadge"><span class="dot"></span><span class="txt">Stocks Gallery</span></div>
+            <div class="gallerySub">Latest preview · open full board</div>
+          </div>
+          <div class="boardActions">
+            <a class="btn small" style="border:1px solid rgba(15,23,42,.18);background:transparent" href="board.html">Open full board</a>
+          </div>
+        </div>
+
+        <table class="boardTable">
+          <thead>
+            <tr>
+              <th class="colNo">No</th>
+              <th class="colTag">Tag</th>
+              <th>Title</th>
+              <th class="colVotes">Up</th>
+              <th class="colViews">Views</th>
+              <th class="colTime">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="colNo"><span class="chip notice">Notice</span></td>
+              <td class="colTag"><span class="chip notice">Notice</span></td>
+              <td><span class="postTitle">[READ] Rules / Not advice</span></td>
+              <td class="colVotes">-</td>
+              <td class="colViews">12,345</td>
+              <td class="colTime">—</td>
+            </tr>
+            <tr>
+  <td class="colNo">10421</td>
+  <td class="colTag"><span class="chip">실적</span></td>
+  <td title="TSLA 이번 분기 가이던스 어떻게 봄?"><a class="postTitle" href="post-detail.html?post=10421">TSLA 이번 분기 가이던스 어떻게 봄? <span class="mono" style="opacity:.6">[38]</span></a></td>
+  <td class="colVotes">127</td>
+  <td class="colViews">9,402</td>
+  <td class="colTime">02-05 10:12</td>
+</tr>
+<tr>
+  <td class="colNo">10420</td>
+  <td class="colTag"><span class="chip">백테스트</span></td>
+  <td title="SCHD vs SPY 10년 적립식 결과 공유"><a class="postTitle" href="post-detail.html?post=10420">SCHD vs SPY 10년 적립식 결과 공유 <span class="mono" style="opacity:.6">[21]</span></a></td>
+  <td class="colVotes">88</td>
+  <td class="colViews">6,118</td>
+  <td class="colTime">02-05 10:04</td>
+</tr>
+<tr>
+  <td class="colNo">10419</td>
+  <td class="colTag"><span class="chip">수급</span></td>
+  <td title="NVDA 옵션 OI 오늘 왜 이럼?"><a class="postTitle" href="post-detail.html?post=10419">NVDA 옵션 OI 오늘 왜 이럼? <span class="mono" style="opacity:.6">[14]</span></a></td>
+  <td class="colVotes">52</td>
+  <td class="colViews">4,203</td>
+  <td class="colTime">02-05 09:55</td>
+</tr>
+<tr>
+  <td class="colNo">10418</td>
+  <td class="colTag"><span class="chip">잡담</span></td>
+  <td title="삼성전자 실적 후 방향성?"><a class="postTitle" href="post-detail.html?post=10418">삼성전자 실적 후 방향성? <span class="mono" style="opacity:.6">[30]</span></a></td>
+  <td class="colVotes">61</td>
+  <td class="colViews">5,010</td>
+  <td class="colTime">02-05 09:41</td>
+</tr>
+<tr>
+  <td class="colNo">10417</td>
+  <td class="colTag"><span class="chip">거시</span></td>
+  <td title="CPI 전 포지션 어떻게 가져감?"><a class="postTitle" href="post-detail.html?post=10417">CPI 전 포지션 어떻게 가져감? <span class="mono" style="opacity:.6">[9]</span></a></td>
+  <td class="colVotes">33</td>
+  <td class="colViews">2,882</td>
+  <td class="colTime">02-05 09:20</td>
+</tr>
+<tr>
+  <td class="colNo">10416</td>
+  <td class="colTag"><span class="chip">거시</span></td>
+  <td title="FOMC 의사록 발표 전 체크할 것들"><a class="postTitle" href="post-detail.html?post=10416">FOMC 의사록 발표 전 체크할 것들 <span class="mono" style="opacity:.6">[12]</span></a></td>
+  <td class="colVotes">74</td>
+  <td class="colViews">7,201</td>
+  <td class="colTime">02-05 08:58</td>
+</tr>
+<tr>
+  <td class="colNo">10415</td>
+  <td class="colTag"><span class="chip">수급</span></td>
+  <td title="QQQ 수급이 갑자기 바뀐 이유?"><a class="postTitle" href="post-detail.html?post=10415">QQQ 수급이 갑자기 바뀐 이유? <span class="mono" style="opacity:.6">[4]</span></a></td>
+  <td class="colVotes">21</td>
+  <td class="colViews">1,902</td>
+  <td class="colTime">02-05 08:44</td>
+</tr>
+<tr>
+  <td class="colNo">10414</td>
+  <td class="colTag"><span class="chip">백테스트</span></td>
+  <td title="TQQQ 장기 적립식 위험구간 정리"><a class="postTitle" href="post-detail.html?post=10414">TQQQ 장기 적립식 위험구간 정리 <span class="mono" style="opacity:.6">[7]</span></a></td>
+  <td class="colVotes">45</td>
+  <td class="colViews">3,100</td>
+  <td class="colTime">02-05 08:12</td>
+</tr>
+          </tbody>
+        </table>
+
+        <div class="bd">
+          <div class="ad wide"><div class="tag">Ad — in feed</div><div class="box">728×90</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card sideCard">
+          <div class="hd"><h2 class="h2">Trending now</h2></div>
+          <div class="bd"><div class="sideList"><a class="sideItem" href="post-detail.html?post=10421"><div><div class="t">TSLA 실적 토론</div><div class="s">댓글 38 · 추천 127</div></div><div class="badge">HOT</div></a>
+<a class="sideItem" href="post-detail.html?post=10418"><div><div class="t">삼성전자 방향성</div><div class="s">댓글 30 · 추천 61</div></div><div class="badge">HOT</div></a>
+<a class="sideItem" href="post-detail.html?post=10420"><div><div class="t">SCHD vs SPY 백테</div><div class="s">댓글 21 · 추천 88</div></div><div class="badge">HOT</div></a></div></div>
+        </div>
+
+        <!-- Ad between cards -->
+        <div class="ad small" style="margin:12px 0">
+          <div class="tag">Ad — between trend-event</div><div class="box">300×250</div>
+        </div>
+
+        <div class="card sideCard">
+          <div class="hd"><h2 class="h2">Event Calendar</h2></div>
+          <div class="bd">
+            <div class="eventCalendar">
+              <div class="calCtrl">
+                <div class="nav">
+                  <button class="btn" type="button" id="calPrev">‹</button>
+                  <button class="btn" type="button" id="calNext">›</button>
+                </div>
+                <div class="sel">
+                  <select id="calYear" aria-label="Year"></select>
+                  <select id="calMonth" aria-label="Month"></select>
+                </div>
+              </div>
+              <div id="calendar" class="cal"></div>
+              <div class="eventSelectedBox" id="eventSelected" style="margin-top:10px"></div>
+              <div class="eventUpcomingGrid" id="eventUpcoming"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ad small sticky" style="margin:12px 0">
+          <div class="tag">Ad — sidebar</div><div class="box">300×600</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer" style="margin-top:16px">
+      <div class="cols">
+        <div><div class="brand"><div class="brand-badge">M</div><div>MyValuePick</div></div></div>
+        <div class="p">MyValuePick</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/assets/ui.js"></script>
+</body>
+</html>

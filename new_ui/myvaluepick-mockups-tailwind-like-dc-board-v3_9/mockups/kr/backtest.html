@@ -1,0 +1,58 @@
+<!doctype html><html data-theme="dark" lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>백테스트 (Mock)</title><link rel="stylesheet" href="../shared/assets/styles.css"/></head>
+<body data-country="kr" data-page="backtest">
+<div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="티커/회사 검색…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>국가</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" >US</option>
+      <option value="../kr/home.html" selected>KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>언어</span>
+    <select><option selected>KO</option><option >EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">로그인</button>
+</div></div>
+<div class="container">
+<div class="grid">
+<div class="card">
+<div class="hd"><div><h1 class="h1">백테스트</h1><div class="kicker">HTML 목업 폼(확정 후 JSX로 이동)</div></div><div class="badge">통화: KRW</div></div>
+<div class="bd">
+<div class="notice">계산 활성 조건: 종목 선택 + 날짜 유효 + 적립금 &gt; 0</div>
+<div style="margin-top:14px;display:grid;gap:10px">
+<div class="input"><div class="mono" style="opacity:.8">종목</div><input placeholder="005930" value="005930"/><small>검색</small></div>
+<div class="row">
+<div class="input" style="flex:1"><div class="mono" style="opacity:.8">시작</div><input placeholder="YYYY-MM-DD" value="2000-01-04"/></div>
+<div class="input" style="flex:1"><div class="mono" style="opacity:.8">종료</div><input placeholder="YYYY-MM-DD" value="2026-02-04"/></div>
+</div>
+<div class="row">
+<div class="input" style="flex:1"><div class="mono" style="opacity:.8">주기</div><select><option selected>월간</option><option>주간</option></select></div>
+<div class="input" style="flex:1"><div class="mono" style="opacity:.8">적립금</div><input placeholder="0" value="0"/><small>KRW</small></div>
+</div>
+<div class="row">
+<div class="input" style="flex:1"><div class="mono" style="opacity:.8">배당세</div><input placeholder="0" value="0"/><small>%</small></div>
+<div class="input" style="flex:1"><div class="mono" style="opacity:.8">DRIP</div><select><option selected>On</option><option>Off</option></select></div>
+</div>
+<div class="ad wide" style="margin-top:4px"><div class="tag">광고 — 폼 아래</div><div class="box">728×90</div></div>
+<div class="card" style="border-radius:16px"><div class="hd"><h2 class="h2">결과(목업)</h2><span class="badge">차트+표</span></div>
+<div class="bd"><div class="p">계산 후 결과가 표시됩니다.</div>
+<div class="ad small" style="margin-top:12px"><div class="tag">광고 — 결과</div><div class="box">300×250</div></div></div></div>
+</div></div></div>
+
+<div><div class="ad small sticky"><div class="tag">광고 — 사이드</div><div class="box">300×600</div></div></div>
+</div></div>
+<script src="../shared/assets/ui.js"></script></body></html>

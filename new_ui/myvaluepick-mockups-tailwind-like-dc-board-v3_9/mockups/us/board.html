@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>MyValuePick · Stocks Gallery</title>
+  <link rel="stylesheet" href="../shared/assets/styles.css"/>
+</head>
+<body>
+  <div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="Search ticker/company…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>Country</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" selected>US</option>
+      <option value="../kr/home.html" >KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>Language</span>
+    <select><option >KO</option><option selected>EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">Login</button>
+</div></div>
+
+  <div class="container boardWide" style="margin-top:16px">
+    <div class="boardLayoutCenter">
+      <div class="adTall">
+        <div class="ad small sticky"><div class="tag">AD — LEFT</div><div class="box">160×600</div></div>
+      </div>
+
+      <div class="boardCardWrap">
+        <div class="card">
+          <div class="boardHeader">
+            <div>
+              <div class="galleryBadge"><span class="dot"></span><span class="txt">Stocks Gallery</span></div>
+              <div class="gallerySub">Full board · pagination/search/inline ads (mock)</div>
+            </div>
+          </div>
+
+          <div style="overflow:auto">
+            <table class="boardTable">
+              <thead>
+                <tr>
+                  <th class="colNo">No</th>
+                  <th class="colTag">Tag</th>
+                  <th>Title</th>
+                  <th class="colVotes">Up</th>
+                  <th class="colViews">Views</th>
+                  <th class="colTime">Time</th>
+                </tr>
+              </thead>
+              <tbody id="boardRows"></tbody>
+            </table>
+          </div>
+
+          <div class="pagerWrap">
+            <div id="boardPagination" class="pager"></div>
+          </div>
+
+          <!-- Search MUST be below pagination -->
+          <div class="boardSearchBelow">
+            <div class="boardSearchBar">
+              <div class="pill">
+                <select id="boardSearchType">
+                  <option value="all">All</option>
+                  <option value="title">Title</option>
+                  <option value="body">Body</option>
+                  <option value="user">User</option>
+                  <option value="comment">Comments</option>
+                </select>
+              </div>
+              <div class="input searchInputRightIcon">
+                <input id="boardSearchInput" placeholder="Search…"/>
+                <button class="iconBtnIn" id="boardSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="adTall">
+        <div class="ad small sticky"><div class="tag">AD — RIGHT</div><div class="box">160×600</div></div>
+      </div>
+    </div>
+
+    <div class="footer" style="margin-top:16px">
+      <div class="cols">
+        <div><div class="brand"><div class="brand-badge">M</div><div>MyValuePick</div></div></div>
+        <div class="p">MyValuePick</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/assets/ui.js"></script>
+</body>
+</html>

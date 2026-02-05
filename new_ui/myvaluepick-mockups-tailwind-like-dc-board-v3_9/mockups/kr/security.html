@@ -1,0 +1,67 @@
+<!doctype html><html data-theme="dark" lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>종목 (Mock)</title><link rel="stylesheet" href="../shared/assets/styles.css"/></head>
+<body data-country="kr" data-page="security">
+<div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="티커/회사 검색…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>국가</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" >US</option>
+      <option value="../kr/home.html" selected>KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>언어</span>
+    <select><option selected>KO</option><option >EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">로그인</button>
+</div></div>
+<div class="container">
+<div class="card">
+<div class="hd">
+<div><div class="kicker">종목</div><h1 class="h1" id="secTitle">KOSPI / 005930</h1>
+<div class="meta" style="margin-top:10px"><span>🏷 대형주</span><span>📰 게시글 12개</span><span>🧪 백테스트</span></div></div>
+<div class="row"><a class="btn" data-keep href="backtest.html">백테스트</a><a class="btn primary" data-keep href="posts.html">게시글</a></div>
+</div>
+
+<div class="bd">
+<div class="row">
+<div class="stat"><div class="label">현재가</div><div class="value mono">₩ 0,000</div><div class="label">Mock</div></div>
+<div class="stat"><div class="label">1일</div><div class="value pos">+0.00%</div><div class="label">Mock</div></div>
+<div class="stat"><div class="label">YTD</div><div class="value neu">+0.0%</div><div class="label">Mock</div></div>
+</div>
+
+<div style="margin-top:14px" class="ad wide"><div class="tag">광고 — 본문</div><div class="box">728×90</div></div>
+
+<div style="margin-top:14px" class="grid">
+<div class="card">
+<div class="hd"><div><h2 class="h2">이벤트 타임라인</h2><div class="kicker">체류시간 ↑</div></div><a class="btn small" data-keep href="posts.html">전체</a></div>
+<div class="bd"><table class="table"><thead><tr><th>날짜</th><th>이벤트</th><th>영향</th></tr></thead><tbody>
+<tr><td class="mono">2026-02-04</td><td>실적 프리뷰</td><td class="pos">▲</td></tr>
+<tr><td class="mono">2026-01-20</td><td>업황 체크</td><td class="neu">●</td></tr>
+<tr><td class="mono">2025-12-18</td><td>리포트 요약</td><td class="neg">▼</td></tr>
+</tbody></table></div></div>
+
+<div>
+<div class="card"><div class="hd"><div><h2 class="h2">빠른 이동</h2><div class="kicker">PV 늘리기</div></div></div>
+<div class="bd"><div class="row" style="margin-bottom:10px"><a class="btn" data-keep href="backtest.html">백테스트</a><a class="btn" data-keep href="posts.html">게시글</a><a class="btn" href="home.html">홈</a></div>
+<div class="notice">✅ “게시글” + “백테스트” 함께 배치</div></div></div>
+<div class="ad small sticky" style="margin-top:14px"><div class="tag">광고 — 사이드</div><div class="box">300×250</div></div>
+</div>
+</div>
+</div>
+
+<div class="ft"><div class="kicker">대표 게시글 열기</div><a class="btn primary" data-keep href="post-detail.html?post=201">대표 글</a></div>
+</div></div>
+<script src="../shared/assets/ui.js"></script></body></html>

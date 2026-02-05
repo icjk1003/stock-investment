@@ -1,0 +1,65 @@
+<!doctype html><html data-theme="dark" lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>글 상세 (Mock)</title><link rel="stylesheet" href="../shared/assets/styles.css"/></head>
+<body data-country="kr" data-page="post-detail">
+<div class="topbar"><div class="inner">
+  <a class="brand" href="home.html"><div class="brand-badge">M</div><div>MyValuePick</div></a>
+
+  <div class="searchWrap">
+    <form id="globalSearch">
+      <div class="searchBox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="globalSearchInput" placeholder="티커/회사 검색…" autocomplete="off"/>
+        <button class="iconBtn" id="globalSearchBtn" type="button" aria-label="Search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="searchResults" id="globalSearchResults"></div>
+    </form>
+  </div>
+
+  <div class="pill"><span>국가</span>
+    <select onchange="location.href=this.value">
+      <option value="../us/home.html" >US</option>
+      <option value="../kr/home.html" selected>KR</option>
+    </select>
+  </div>
+  <div class="pill"><span>언어</span>
+    <select><option selected>KO</option><option >EN</option></select>
+  </div>
+  <button class="btn" type="button" id="themeToggle" data-theme-toggle>🌙 Dark</button>
+  <button class="btn primary">로그인</button>
+</div></div>
+<div class="container">
+<div class="grid">
+<div class="card">
+<div class="hd"><div>
+<div class="meta"><span>🕒 2시간 전</span><span>🏷 실적</span><span class="mono">005930</span></div>
+<h1 class="h1" style="margin-top:10px">삼성전자: 이번 분기 체크포인트</h1>
+<p class="p">짧은 도입부(스크롤 유도)</p></div></div>
+
+<div class="bd">
+<div class="ad wide"><div class="tag">광고 — 본문 상단</div><div class="box">728×90</div></div>
+<div style="margin-top:16px" class="notice">✅ 짧은 문단 + 소제목 + 리스트는 체류시간을 늘립니다.</div>
+<h2 class="h2" style="margin-top:16px">1) 핵심 포인트</h2><p class="p">• 가이던스 • 마진 • 업황</p>
+<div style="margin-top:16px" class="ad wide"><div class="tag">광고 — 본문 중간</div><div class="box">728×90</div></div>
+<h2 class="h2" style="margin-top:16px">2) 다음 액션</h2><p class="p">백테스트/다른 글 클릭 유도</p>
+<div class="row" style="margin-top:14px">
+<a class="btn primary" href="backtest.html?market=kospi&symbol=005930">백테스트</a>
+<a class="btn" href="posts.html">다른 글</a>
+<a class="btn" href="security.html?market=kospi&symbol=005930">종목</a>
+</div>
+</div>
+
+<div class="ft"><div class="kicker">연관 글(세션 유지)</div><a class="btn" href="post-detail.html?market=kospi&symbol=005930&post=204">다음 글</a></div>
+</div>
+
+<div>
+<div class="card"><div class="hd"><div><h2 class="h2">연관 종목</h2><div class="kicker">교차 링크</div></div></div>
+<div class="bd"><div class="row">
+<a class="badge" href="security.html?market=kospi&symbol=000660">000660</a>
+<a class="badge" href="security.html?market=kospi&symbol=051910">051910</a>
+<a class="badge" href="security.html?market=nasdaq&symbol=TSLA">TSLA</a>
+</div></div></div>
+<div class="ad small sticky" style="margin-top:14px"><div class="tag">광고 — 사이드</div><div class="box">300×600</div></div>
+</div>
+
+</div></div>
+<script src="../shared/assets/ui.js"></script></body></html>
